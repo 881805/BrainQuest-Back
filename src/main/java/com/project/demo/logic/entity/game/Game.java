@@ -1,30 +1,36 @@
-package com.project.demo.logic.entity.game;
+package com.project.demo.logic.entity;
 
+import com.project.demo.logic.entity.conversation.Conversation;
+import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
-
-@Table(name = "game")
 @Entity
+@Table(name = "game")
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
-    private String name;
-    private String description;
+    private Long id;
 
-    private String status;
-    private String  imgURL;
+    @ManyToOne
+    @JoinColumn(name = "conversation_id", referencedColumnName = "id")
+    private Conversation conversation;
 
-    @CreationTimestamp
-    @Column(updatable = false, name = "created_at")
-    private Date createdAt;
+    @ManyToOne
+    @JoinColumn(name = "winner", referencedColumnName = "userId")
+    private User winner;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private Date updatedAt;
+    private int pointsEarnedPlayer1;
+    private int pointsEarnedPlayer2;
+
+    public Game() {
+    }
+
+    public Game(Conversation conversation, User winner, int pointsEarnedPlayer1, int pointsEarnedPlayer2) {
+        this.conversation = conversation;
+        this.winner = winner;
+        this.pointsEarnedPlayer1 = pointsEarnedPlayer1;
+        this.pointsEarnedPlayer2 = pointsEarnedPlayer2;
+    }
 
     public Long getId() {
         return id;
@@ -34,51 +40,46 @@ public class Game {
         this.id = id;
     }
 
-    public String getStatus() {
-        return status;
+    public Conversation getConversation() {
+        return conversation;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setConversation(Conversation conversation) {
+        this.conversation = conversation;
     }
 
-    public String getName() {
-        return name;
+    public User getWinner() {
+        return winner;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setWinner(User winner) {
+        this.winner = winner;
     }
 
-    public String getDescription() {
-        return description;
+    public int getPointsEarnedPlayer1() {
+        return pointsEarnedPlayer1;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPointsEarnedPlayer1(int pointsEarnedPlayer1) {
+        this.pointsEarnedPlayer1 = pointsEarnedPlayer1;
     }
 
-    public String getImgURL() {
-        return imgURL;
+    public int getPointsEarnedPlayer2() {
+        return pointsEarnedPlayer2;
     }
 
-    public void setImgURL(String imgURL) {
-        this.imgURL = imgURL;
+    public void setPointsEarnedPlayer2(int pointsEarnedPlayer2) {
+        this.pointsEarnedPlayer2 = pointsEarnedPlayer2;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", conversation=" + conversation +
+                ", winner=" + winner +
+                ", pointsEarnedPlayer1=" + pointsEarnedPlayer1 +
+                ", pointsEarnedPlayer2=" + pointsEarnedPlayer2 +
+                '}';
     }
 }

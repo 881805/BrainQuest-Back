@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.user;
-import com.project.demo.logic.entity.order.Order;
+
+import com.project.demo.logic.entity.level.Level;
 import com.project.demo.logic.entity.rol.Role;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +18,7 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
     private String name;
     private String lastname;
     @Column(unique = true, length = 100, nullable = false)
@@ -29,6 +30,10 @@ public class User implements UserDetails {
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "level_id", referencedColumnName = "id")
+    private Level level;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
@@ -44,8 +49,6 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Order> orders;
 
     // Constructors
     public User() {}
@@ -77,11 +80,11 @@ public class User implements UserDetails {
     }
 
     public Long getId() {
-        return id;
+        return userId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.userId = id;
     }
 
     public String getName() {
@@ -137,13 +140,6 @@ public class User implements UserDetails {
         return role;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
 
     public User setRole(Role role) {
         this.role = role;
