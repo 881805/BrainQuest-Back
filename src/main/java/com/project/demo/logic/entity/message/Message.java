@@ -9,16 +9,27 @@ import java.time.LocalDateTime;
 @Table(name= "message")
 public class Message {
 private String conversationId;
+
+@Column(name = "content_text", length = 1000)
 private String contentText;
-private LocalDateTime createDate;
-private String sendingUserId;
+
+//anhade create date a los metodos
+    @Column(name = "create_date", nullable = false, updatable = false)
+    private LocalDateTime createDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.createDate = LocalDateTime.now();
+    }
+private Long sendingUserId;
 private boolean isSent;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Message(String conversationId, String contentText, LocalDateTime createDate, String sendingUserId, boolean isSent) {
+    public Message(String conversationId, String contentText, LocalDateTime createDate, Long sendingUserId, boolean isSent) {
     this.conversationId = conversationId;
+
     this.contentText = contentText;
     this.createDate = createDate;
     this.sendingUserId = sendingUserId;
@@ -28,7 +39,7 @@ private boolean isSent;
     public Message() {
     }
 
-    public Message(String conversationId, Long id, boolean isSent, String sendingUserId, String contentText, LocalDateTime createDate) {
+    public Message(String conversationId, Long id, boolean isSent, Long sendingUserId, String contentText, LocalDateTime createDate) {
         this.conversationId = conversationId;
         this.id = id;
         this.isSent = isSent;
@@ -61,11 +72,11 @@ public void setCreateDate(LocalDateTime createDate) {
     this.createDate = createDate;
 }
 
-public String getSendingUserId() {
+public Long getSendingUserId() {
     return sendingUserId;
 }
 
-public void setSendingUserId(String sendingUserId) {
+public void setSendingUserId(Long sendingUserId) {
     this.sendingUserId = sendingUserId;
 }
 

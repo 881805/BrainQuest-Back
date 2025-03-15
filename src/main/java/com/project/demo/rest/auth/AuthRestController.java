@@ -23,7 +23,6 @@ import java.util.Optional;
 @RestController
 public class AuthRestController {
 
-
     @Autowired
     private UserRepository userRepository;
 

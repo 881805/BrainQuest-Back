@@ -17,7 +17,7 @@ public class Conversation {
     private User user1;
 
     @ManyToOne
-    @JoinColumn(name = "user_id2", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id2", referencedColumnName = "userId", nullable = true)
     private User user2;
 
     private LocalDateTime createDate;
