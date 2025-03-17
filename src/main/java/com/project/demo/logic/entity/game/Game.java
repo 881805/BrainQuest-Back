@@ -1,6 +1,7 @@
-package com.project.demo.logic.entity;
+package com.project.demo.logic.entity.game;
 
 import com.project.demo.logic.entity.conversation.Conversation;
+import com.project.demo.logic.entity.gameType.GameType;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
 
@@ -19,8 +20,41 @@ public class Game {
     @JoinColumn(name = "winner", referencedColumnName = "userId")
     private User winner;
 
+    @ManyToOne
+    @JoinColumn(name = "game_type", referencedColumnName = "id")
+    private GameType gameType;
+
+
+    private boolean isOngoing; //determina si el juego esta activo o no, un jugazdor no puede estar en varios juegos activos al mismo tiempo del mismo tipo
+
     private int pointsEarnedPlayer1;
     private int pointsEarnedPlayer2;
+
+    public Game(Long id, Conversation conversation, User winner, GameType gameType, boolean isOngoing, int pointsEarnedPlayer1, int pointsEarnedPlayer2) {
+        this.id = id;
+        this.conversation = conversation;
+        this.winner = winner;
+        this.gameType = gameType;
+        this.isOngoing = isOngoing;
+        this.pointsEarnedPlayer1 = pointsEarnedPlayer1;
+        this.pointsEarnedPlayer2 = pointsEarnedPlayer2;
+    }
+
+    public GameType getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
+    public boolean isOngoing() {
+        return isOngoing;
+    }
+
+    public void setOngoing(boolean ongoing) {
+        isOngoing = ongoing;
+    }
 
     public Game() {
     }
