@@ -1,9 +1,11 @@
 package com.project.demo.logic.entity.conversation;
 
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.project.demo.logic.entity.message.Message;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "conversation")
@@ -12,9 +14,11 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user1;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id2", referencedColumnName = "userId", nullable = true)
@@ -23,25 +27,6 @@ public class Conversation {
     private LocalDateTime createDate;
     private boolean isMultiplayer;
     private String gameId;
-
-    public Conversation() {
-    }
-
-    public Conversation(User user1, User user2, LocalDateTime createDate, boolean isMultiplayer, String gameId) {
-        this.user1 = user1;
-        this.user2 = user2;
-        this.createDate = createDate;
-        this.isMultiplayer = isMultiplayer;
-        this.gameId = gameId;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public User getUser1() {
         return user1;
@@ -67,7 +52,7 @@ public class Conversation {
         this.createDate = createDate;
     }
 
-    public boolean isMultiplayer() {
+    public boolean getIsMultiplayer() {
         return isMultiplayer;
     }
 
@@ -83,9 +68,29 @@ public class Conversation {
         this.gameId = gameId;
     }
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Message> messages; // ✅ Ensure messages are deleted with conversation
+
+    public Conversation() {}
+
+    public Conversation(User user1, User user2, LocalDateTime createDate, boolean isMultiplayer, String gameId) {
+        this.user1 = user1;
+        this.user2 = user2;
+        this.createDate = createDate;
+        this.isMultiplayer = isMultiplayer;
+        this.gameId = gameId;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public List<Message> getMessages() { return messages; }
+    public void setMessages(List<Message> messages) { this.messages = messages; }
+
     @Override
     public String toString() {
-        return "Conversation{" +
+        return "conversation{" +
                 "id=" + id +
                 ", user1=" + user1 +
                 ", user2=" + user2 +
