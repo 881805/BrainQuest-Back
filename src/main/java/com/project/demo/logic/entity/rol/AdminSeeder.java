@@ -33,23 +33,28 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
         this.createAIUser();
     }
 
-    private void createAIUser(){
+   private void createAIUser() {
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
+
+        if (optionalRole.isEmpty()) {
+            throw new RuntimeException("El rol USER no existe en la base de datos.");
+        }
+
+        if (optionalUser.isPresent()) {
+            return; // El usuario ya existe, no se crea de nuevo
+        }
+
         User aiUser = new User();
         aiUser.setName("Gemini");
         aiUser.setLastname("Google");
         aiUser.setEmail("gemini.google@gmail.com");
         aiUser.setPassword(passwordEncoder.encode("123456976345425843252sdfgsr@D!"));
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
-        Optional<User> optionalUser = userRepository.findByEmail(aiUser.getEmail());
-
         aiUser.setRole(optionalRole.get());
-
-        if (optionalRole.isEmpty() || optionalUser.isPresent()) {
-            return;
-        }
 
         userRepository.save(aiUser);
     }
+
     private void createSuperAdministrator() {
         User superAdmin = new User();
         superAdmin.setName("Super");

@@ -1,10 +1,8 @@
-package com.project.demo.logic.entity.game;
+package com.project.demo.logic.entity.trivia;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface GameRepository extends JpaRepository<Game, Long> {
-
+public interface TriviaRepository extends JpaRepository<TriviaQuestion, Long> {
 }

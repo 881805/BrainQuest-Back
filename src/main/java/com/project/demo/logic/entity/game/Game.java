@@ -1,6 +1,7 @@
-package com.project.demo.logic.entity;
+package com.project.demo.logic.entity.game;
 
 import com.project.demo.logic.entity.conversation.Conversation;
+import com.project.demo.logic.entity.trivia.TriviaQuestion;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
 
@@ -12,12 +13,15 @@ public class Game {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "conversation_id", referencedColumnName = "id")
+    @JoinColumn(name = "conversation_id", referencedColumnName = "id", nullable = true)
     private Conversation conversation;
 
     @ManyToOne
     @JoinColumn(name = "winner", referencedColumnName = "userId")
     private User winner;
+    @ManyToOne
+    @JoinColumn(name = "trivia_question", referencedColumnName = "id", nullable = true)
+    private TriviaQuestion question;
 
     private int pointsEarnedPlayer1;
     private int pointsEarnedPlayer2;
@@ -70,6 +74,14 @@ public class Game {
 
     public void setPointsEarnedPlayer2(int pointsEarnedPlayer2) {
         this.pointsEarnedPlayer2 = pointsEarnedPlayer2;
+    }
+
+    public TriviaQuestion getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(TriviaQuestion question) {
+        this.question = question;
     }
 
     @Override
