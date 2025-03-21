@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.ArrayList;
 
 @RestController
@@ -62,9 +63,6 @@ public class TriviaController {
                     .body("Error al generar la pregunta de trivia: " + e.getMessage());
         }
     }
-
-
-
 
     @GetMapping("/all")
     public ResponseEntity<List<TriviaQuestion>> getAllTriviaQuestions() {

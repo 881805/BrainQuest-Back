@@ -23,7 +23,6 @@ public class TriviaQuestion {
     private String category;
     @ManyToOne
     private Game game;
-
     public TriviaQuestion() {
 
     }
