@@ -46,4 +46,7 @@ build/resources/
 .gradle/8.7/checksums/sha1-checksums.bin
 .gradle/8.7/checksums/md5-checksums.bin
 .gradle/8.7/checksums/sha1-checksums.bin
+<<<<<<< Updated upstream
 .gradle/file-system.probe
+=======
+>>>>>>> Stashed changes
