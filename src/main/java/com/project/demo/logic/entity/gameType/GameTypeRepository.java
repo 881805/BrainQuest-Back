@@ -1,9 +1,5 @@
 package com.project.demo.logic.entity.gameType;
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 import com.project.demo.logic.entity.rol.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
