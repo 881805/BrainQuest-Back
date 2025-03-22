@@ -13,6 +13,8 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
     @ManyToOne
     @JoinColumn(name = "conversation_id", referencedColumnName = "id", nullable = true)
     private Conversation conversation;
@@ -32,6 +34,8 @@ public class Game {
     private boolean isOngoing; //determina si el juego esta activo o no, un jugazdor no puede estar en varios juegos activos al mismo tiempo del mismo tipo
 
     private int pointsEarnedPlayer1;
+
+    @Column(nullable = true)
     private int pointsEarnedPlayer2;
 
     public Game(Long id, Conversation conversation, User winner, GameType gameType, boolean isOngoing, int pointsEarnedPlayer1, int pointsEarnedPlayer2) {
@@ -52,12 +56,12 @@ public class Game {
         this.gameType = gameType;
     }
 
-    public boolean isOngoing() {
-        return isOngoing;
+    public boolean getIsOngoing() {
+        return this.isOngoing;
     }
 
-    public void setOngoing(boolean ongoing) {
-        isOngoing = ongoing;
+    public void setIsOngoing(boolean isOngoing) {
+        this.isOngoing = isOngoing;
     }
 
     public Game() {

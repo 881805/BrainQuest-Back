@@ -2,6 +2,8 @@ package com.project.demo.rest.message;
 
 
 import com.project.demo.gemini.GeminiService;
+import com.project.demo.logic.entity.config.Config;
+import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.message.Message;
@@ -35,6 +37,8 @@ public class MessageController {
     private GeminiService geminiService;
 
     private AdminSeeder adminSeeder;
+    @Autowired
+    private ConfigRepository configRepository;
 
     public MessageController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
@@ -45,6 +49,8 @@ public class MessageController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createMessage(@RequestBody Message message, HttpServletRequest request) {
         messageRepository.save(message); //guarda mensaje enviado por el usuario
+
+        Optional<Config> userConfig = configRepository.findByUser(message.getUser());
 
         String reply= geminiService.getCompletion(message.getContentText()); //respuesta de ia genera
 

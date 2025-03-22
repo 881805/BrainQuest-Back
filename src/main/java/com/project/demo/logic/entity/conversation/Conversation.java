@@ -26,7 +26,7 @@ public class Conversation {
 
     private LocalDateTime createDate;
     private boolean isMultiplayer;
-    private String gameId;
+
 
     public User getUser1() {
         return user1;
@@ -60,13 +60,6 @@ public class Conversation {
         isMultiplayer = multiplayer;
     }
 
-    public String getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
-    }
 
     @JsonManagedReference
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -74,12 +67,12 @@ public class Conversation {
 
     public Conversation() {}
 
-    public Conversation(User user1, User user2, LocalDateTime createDate, boolean isMultiplayer, String gameId) {
+    public Conversation(User user1, User user2, LocalDateTime createDate, boolean isMultiplayer) {
         this.user1 = user1;
         this.user2 = user2;
         this.createDate = createDate;
         this.isMultiplayer = isMultiplayer;
-        this.gameId = gameId;
+
     }
 
     public Long getId() { return id; }
@@ -96,7 +89,6 @@ public class Conversation {
                 ", user2=" + user2 +
                 ", createDate=" + createDate +
                 ", isMultiplayer=" + isMultiplayer +
-                ", gameId='" + gameId + '\'' +
                 '}';
     }
 }

@@ -68,7 +68,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
         aiUser.setRole(optionalRole.get());
 
-        if (optionalRole.isEmpty() || optionalUser.isPresent()) {
+        if ( optionalUser.isPresent()) {
             return;
         }
 
