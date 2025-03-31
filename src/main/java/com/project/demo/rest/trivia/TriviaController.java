@@ -59,9 +59,6 @@ public class TriviaController {
         }
     }
 
-
-
-
     @GetMapping("/all")
     public ResponseEntity<List<TriviaQuestion>> getAllTriviaQuestions() {
         return ResponseEntity.ok(triviaQuestionRepository.findAll());
@@ -72,12 +69,10 @@ public class TriviaController {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response);
 
-            // 🔹 Validar si falta algún campo en el JSON
             if (!jsonNode.has("question") || !jsonNode.has("options") || !jsonNode.has("correctAnswer")) {
                 throw new RuntimeException("Formato incorrecto en la respuesta de Gemini: " + response);
             }
 
-            // Crear la pregunta de trivia
             TriviaQuestion question = new TriviaQuestion();
             question.setQuestion(jsonNode.get("question").asText());
 
