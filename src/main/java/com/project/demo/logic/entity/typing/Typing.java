@@ -13,12 +13,12 @@ public class Typing {
 
     @Column(columnDefinition = "TEXT")
     private String text;
-    private int timeLimit; // Tiempo en segundos
+    private int timeLimit;
     private String difficulty;
     private String category;
 
     @ElementCollection
-    private List<String> hints; // Posibles pistas para ayudar en la escritura
+    private List<String> hints;
 
     @ManyToOne
     private Game game;
