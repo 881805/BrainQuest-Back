@@ -29,31 +29,26 @@ public class TypingController {
     @PostMapping("/generate")
     public ResponseEntity<?> generateTypingExercise(@RequestBody Typing typingRequest) {
         try {
-            // 🔹 Nueva versión del prompt para asegurar JSON válido
+
             String prompt = "Eres un generador de ejercicios de mecanografía. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
                     "{ \"text\": \"Texto de máximo 200 caracteres\", \"timeLimit\": 60, \"hints\": [\"Pista 1\", \"Pista 2\"] }\n" +
                     "El ejercicio debe ser sobre " + typingRequest.getCategory() + " con dificultad " + typingRequest.getDifficulty() +
                     ". NO agregues explicaciones, texto adicional ni comentarios, SOLO el JSON.";
 
 
-            // Llamar a Gemini y obtener la respuesta
             String reply = geminiService.getCompletion(prompt);
-            System.out.println("Respuesta de Gemini: " + reply); // Debugging
+            System.out.println("Respuesta de Gemini: " + reply);
 
-            // 🔹 Limpiar la respuesta
             reply = reply.trim().replaceAll("```", "")
-                    .replaceAll("(?i)^json\\s*", "")  // Eliminar "json" al principio
+                    .replaceAll("(?i)^json\\s*", "")
                     .trim();
 
-            // 🔹 Validar si la respuesta es JSON
             if (!reply.startsWith("{")) {
                 throw new RuntimeException("Respuesta de Gemini no es JSON válido: " + reply);
             }
 
-            // Convertir la respuesta de Gemini a un objeto Typing
             Typing typingExercise = parseResponse(reply, typingRequest.getCategory(), typingRequest.getDifficulty());
 
-            // Guardar en la base de datos
             typingRepository.save(typingExercise);
 
             return new ResponseEntity<>(typingExercise, HttpStatus.CREATED);
@@ -74,12 +69,10 @@ public class TypingController {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response);
 
-            // 🔹 Validar si falta algún campo
             if (!jsonNode.has("text") || !jsonNode.has("timeLimit") || !jsonNode.has("hints")) {
                 throw new RuntimeException("Formato incorrecto en la respuesta de Gemini: " + response);
             }
 
-            // Crear el ejercicio de escritura
             Typing typingExercise = new Typing();
             typingExercise.setText(jsonNode.get("text").asText());
             typingExercise.setTimeLimit(jsonNode.get("timeLimit").asInt());
