@@ -23,9 +23,12 @@ public class User implements UserDetails {
     private String lastname;
     @Column(unique = true, length = 100, nullable = false)
     private String email;
+    private String provider;
+    private String googleId;
 
     @Column(nullable = false)
     private String password;
+
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
@@ -49,14 +52,13 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
 
-
-    // Constructors
     public User() {}
-
 
     public User(Long userId){
         this.userId = userId;
     }
+
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -142,6 +144,22 @@ public class User implements UserDetails {
 
     public Role getRole() {
         return role;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public String getProvider(String google) {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
 
