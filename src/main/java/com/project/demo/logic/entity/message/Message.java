@@ -78,7 +78,17 @@ public class Message {
     }
 
 
-
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", conversation=" + conversation +
+                ", contentText='" + contentText + '\'' +
+                ", createdAt=" + createdAt +
+                ", user=" + user +
+                ", isSent=" + isSent +
+                '}';
+    }
 
     public boolean getIsSent() {
         return isSent;

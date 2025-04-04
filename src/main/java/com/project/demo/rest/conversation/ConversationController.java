@@ -78,7 +78,7 @@ public class ConversationController {
         meta.setPageNumber(messagePage.getNumber() + 1);
         meta.setPageSize(messagePage.getSize());
 
-        return new GlobalResponseHandler().handleResponse("Messages retrieved successfully",
+        return new GlobalResponseHandler().handleResponse("Conversations retrieved successfully",
                 messagePage.getContent(), HttpStatus.OK, meta);
     }
 

@@ -1,5 +1,7 @@
 package com.project.demo.logic.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.demo.logic.entity.level.Level;
 import com.project.demo.logic.entity.rol.Role;
 import jakarta.persistence.*;
@@ -26,6 +28,7 @@ public class User implements UserDetails {
     private String provider;
     private String googleId;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
 
@@ -51,6 +54,22 @@ public class User implements UserDetails {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
+
+
+    private Long experience;
+
+
+    // Constructors
+    public User() {}
+
+    public Long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Long experience) {
+        this.experience = experience;
+    }
+
 
     public User() {}
 

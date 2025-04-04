@@ -57,7 +57,7 @@ public class GeminiService {
     public String getCompletion(String text) {
         GeminiResponse response = getCompletion(new GeminiRequest(
                 List.of(new Content(List.of(new TextPart(text))))));
-        return response.candidates().getFirst().content().parts().getFirst().text();
+        return response.candidates().get(0).content().parts().get(0).text();
     }
 
 //    public String getCompletionWithImage(String text, String imageFileName) throws IOException {
