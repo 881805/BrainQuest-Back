@@ -70,7 +70,7 @@ public class GameController {
         conversation.setUser1(winner);
         conversation.setUser2(winner);
         conversation.setMultiplayer(false);
-        conversation.setCreateDate(LocalDateTime.from(LocalTime.now()));
+        conversation.setCreateDate(LocalDateTime.now());
 
         conversationRepository.save(conversation);
 

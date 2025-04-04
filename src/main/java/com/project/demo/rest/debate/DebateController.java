@@ -16,6 +16,9 @@ import com.project.demo.logic.entity.rol.AdminSeeder;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -133,7 +136,7 @@ public class DebateController {
         gameRepository.save(game);
     }
 
-    public ResponseEntity<?> judgeDebate(@RequestBody Game game, HttpServletRequest request) {
+    public ResponseEntity<?> judgeDebate(@RequestBody Game game, HttpServletRequest request) throws JSONException {
 
         List<Message> messages = game.getConversation().getMessages();
 
@@ -142,12 +145,26 @@ public class DebateController {
         System.out.println(conversationString);
 
         String reply = geminiService.getCompletion(conversationString + " Send a json reply with the following format {feedback: '', score: 0} " +
-                "Where the score is obtained by judging the performance of user1 and award them an ammount of points from 0 to 500. " +
+                "El string de feedback empiezalo con la palabra 'Feeback: ' Y adicional mente tambien probee el score dentro de feedback diciendo 'La puntuacion es la siguiente:' y luego poniendo el score.Where the score is obtained by judging the performance of user1 and award them an ammount of points from 0 to 500. " +
                 "Please keep your reply short sending only the number and a small sentence for feedback inside the json. contentText contiene los mensajes hablados. Mensajes en espanhol por favor"); //respuesta de ia genera
 
+        JSONObject json = null;
+        String feedback = null;
+        Long score = null;
+
+
+        String cleanedJson = reply.replaceAll("```json|```", "").trim();
+        try {
+            json = new JSONObject(cleanedJson);
+            feedback = json.getString("feedback");
+            score = json.getLong("score");
+
+        } catch (JSONException e) {
+            System.out.println(e);
+        }
 
         Message replyMessageModerator = new Message();
-        replyMessageModerator.setContentText(reply);
+        replyMessageModerator.setContentText(feedback);
         replyMessageModerator.setConversation(game.getConversation());
         replyMessageModerator.setIsSent(true);
         Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
@@ -155,6 +172,10 @@ public class DebateController {
         User gemini = userRepository.findById(geminiUserId).get();
         replyMessageModerator.setUser(gemini);
         messageRepository.save(replyMessageModerator);
+
+
+        // Extract values
+
 
         //actualizar juego para que termine
         Optional<Game> optionalGame = gameRepository.findById(game.getId());
@@ -166,6 +187,12 @@ public class DebateController {
 
 
         }
+
+        Long winnerId = game.getWinner().getId();
+        Optional<User> winnerUser = userRepository.findById(winnerId);
+        winnerUser.get().setExperience(score+winnerUser.get().getExperience());
+        userRepository.save(winnerUser.get());
+
 
         return new ResponseEntity<>(foundGame, HttpStatus.CREATED);
     }

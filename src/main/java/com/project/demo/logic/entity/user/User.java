@@ -52,10 +52,19 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
 
+    private Long experience;
+
 
     // Constructors
     public User() {}
 
+    public Long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Long experience) {
+        this.experience = experience;
+    }
 
     public User(Long userId){
         this.userId = userId;
