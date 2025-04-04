@@ -18,6 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,7 @@ import java.util.Optional;
 @RequestMapping("/messages")
 @RestController
 public class MessageController {
+
 
     @Autowired
     private UserRepository userRepository;
@@ -45,36 +49,18 @@ public class MessageController {
         this.geminiService = geminiService;
     }
 
+
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createMessage(@RequestBody Message message, HttpServletRequest request) {
-        messageRepository.save(message); //guarda mensaje enviado por el usuario
+        Optional<User> optionalUser = userRepository.findById(message.getUser().getId());
+        message.setUser(optionalUser.get());
+        messageRepository.save(message);
 
-        Optional<Config> userConfig = configRepository.findByUser(message.getUser());
-
-        String reply= geminiService.getCompletion(message.getContentText()); //respuesta de ia genera
-
-        //salvando la respuesta de la IA
-        Message replyMessage = new Message();
-        replyMessage.setContentText(reply);
-
-        replyMessage.setConversation(message.getConversation());
-
-
-        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
-       Long geminiUserId = optionalUser.get().getId();
-
-
-
-        User gemini = userRepository.findById(geminiUserId).get();
-
-        replyMessage.setUser(gemini);
-
-
-        messageRepository.save(replyMessage);
-
-        return new ResponseEntity<>(replyMessage, HttpStatus.CREATED);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
+
+
 
 
     @GetMapping

@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.demo.logic.entity.level.Level;
 import com.project.demo.logic.entity.rol.Role;

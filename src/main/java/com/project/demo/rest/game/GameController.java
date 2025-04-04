@@ -29,6 +29,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @RequestMapping("/games")
@@ -64,12 +66,14 @@ public class GameController {
         // Fetch User by winner ID
         User winner = userRepository.findById(game.getWinner().getId()).orElse(null);
 
-        // Fetch Conversation by conversation ID (if exists)
-        Conversation conversation = game.getConversation() != null ?
-                conversationRepository.findById(game.getConversation().getId())
-                        .orElseThrow(() -> new RuntimeException("Conversation not found")) : null;
+        Conversation conversation = new Conversation();
+        conversation.setUser1(winner);
+        conversation.setUser2(winner);
+        conversation.setMultiplayer(false);
+        conversation.setCreateDate(LocalDateTime.from(LocalTime.now()));
 
-        // Fetch TriviaQuestion by triviaQuestion ID (if exists)
+        conversationRepository.save(conversation);
+
         TriviaQuestion triviaQuestion = game.getQuestion() != null ?
                 triviaRepository.findById(game.getQuestion().getId())
                         .orElseThrow(() -> new RuntimeException("Trivia Question not found")) : null;
@@ -79,13 +83,12 @@ public class GameController {
                 gameTypeRepository.findById(game.getGameType().getId())
                         .orElseThrow(() -> new RuntimeException("Game Type not found")) : null;
 
-        // Set fetched entities into the game object
         game.setWinner(winner);
         game.setConversation(conversation);
         game.setQuestion(triviaQuestion);
         game.setGameType(gameType);
 
-        // Save the game
+
         gameRepository.save(game);
 
         return new ResponseEntity<>(game, HttpStatus.CREATED);
@@ -108,6 +111,7 @@ public class GameController {
         meta.setPageNumber(gamePage.getNumber() + 1);
         meta.setPageSize(gamePage.getSize());
 
+        gamePage.getContent().forEach(game -> {game.setTimeLeft(game.getTimeLeft());}); //agrega el timeleft para que el frontend trabaje con ello y pueda ensenharlo correctamente.
         return new GlobalResponseHandler().handleResponse("Games retrieved successfully",
                 gamePage.getContent(), HttpStatus.OK, meta);
     }
@@ -116,13 +120,29 @@ public class GameController {
     @GetMapping("/{userId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getByUserId(
-            @PathVariable Long userId) {
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        // Create user object from userId
         User user = new User(userId);
-        // Pass conversationId and pageable to the repository method
-       Optional<Game> foundGame = gameRepository.findByWinnerAndIsOngoingTrue(user);
 
+        // Find games by user and winner condition, with pagination
+        Page<Game> gamePage = gameRepository.findByConversationUser1AndIsOngoingTrue(user, pageable);
 
-        return new ResponseEntity<>(foundGame.get(), HttpStatus.CREATED);
+        // Prepare metadata for response
+        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+        meta.setTotalPages(gamePage.getTotalPages());
+        meta.setTotalElements(gamePage.getTotalElements());
+        meta.setPageNumber(gamePage.getNumber() + 1);
+        meta.setPageSize(gamePage.getSize());
+
+        // Return response with games and metadata
+        return new GlobalResponseHandler().handleResponse("Games retrieved successfully",
+                gamePage.getContent(), HttpStatus.OK, meta);
     }
     @PutMapping
     @PreAuthorize("isAuthenticated()")
@@ -168,6 +188,30 @@ public class GameController {
         }
     }
 
+    @PatchMapping("/{gameId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> endGame(
+            @PathVariable Long gameId,
+            HttpServletRequest httpServletRequest) {
+
+        Optional<Game> optionalGame = gameRepository.findById(gameId);
+        if (optionalGame.isPresent()) {
+            Game game = optionalGame.get();
+            game.setIsOngoing(false);
+            gameRepository.save(game);
+
+            return new GlobalResponseHandler().handleResponse(
+                    "Game ended successfully",
+                    game,
+                    HttpStatus.OK,
+                    httpServletRequest);
+        } else {
+            return new GlobalResponseHandler().handleResponse(
+                    "Game not found",
+                    HttpStatus.NOT_FOUND,
+                    httpServletRequest);
+        }
+    }
 
 
 }

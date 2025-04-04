@@ -1,10 +1,15 @@
 package com.project.demo.logic.entity.game;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.conversation.Conversation;
 import com.project.demo.logic.entity.gameType.GameType;
 import com.project.demo.logic.entity.trivia.TriviaQuestion;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "game")
@@ -12,8 +17,6 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
 
     @ManyToOne
     @JoinColumn(name = "conversation_id", referencedColumnName = "id", nullable = true)
@@ -30,13 +33,24 @@ public class Game {
     @JoinColumn(name = "game_type", referencedColumnName = "id")
     private GameType gameType;
 
-
     private boolean isOngoing; //determina si el juego esta activo o no, un jugazdor no puede estar en varios juegos activos al mismo tiempo del mismo tipo
 
     private int pointsEarnedPlayer1;
 
     @Column(nullable = true)
     private int pointsEarnedPlayer2;
+
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
+    @Column(nullable = true)
+    private Instant expirationTime;
+
+    @Transient
+    private long timeLeft;
+
+    private long maxTurns;
+
+    private long elapsedTurns;
 
     public Game(Long id, Conversation conversation, User winner, GameType gameType, boolean isOngoing, int pointsEarnedPlayer1, int pointsEarnedPlayer2) {
         this.id = id;
@@ -122,6 +136,35 @@ public class Game {
         this.question = question;
     }
 
+    @JsonIgnore
+    public long getTimeLeft() {
+        return Math.max(0, ChronoUnit.SECONDS.between(Instant.now(), this.expirationTime));
+    }
+
+    public long getMaxTurns() {
+        return maxTurns;
+    }
+
+    public void setMaxTurns(long maxTurns) {
+        this.maxTurns = maxTurns;
+    }
+
+    public long getElapsedTurns() {
+        return elapsedTurns;
+    }
+
+    public void setElapsedTurns(long elapsedTurns) {
+        this.elapsedTurns = elapsedTurns;
+    }
+
+    public Instant getExpirationTime() {
+        return expirationTime;
+    }
+
+    public void setExpirationTime(Instant expirationTime) {
+        this.expirationTime = expirationTime;
+    }
+
     @Override
     public String toString() {
         return "Game{" +
@@ -131,5 +174,9 @@ public class Game {
                 ", pointsEarnedPlayer1=" + pointsEarnedPlayer1 +
                 ", pointsEarnedPlayer2=" + pointsEarnedPlayer2 +
                 '}';
+    }
+
+    public void setTimeLeft(long timeLeft) {
+        this.timeLeft = timeLeft;
     }
 }
