@@ -18,7 +18,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String login(){
-        return "redirect:/team";
+        return "redirect:/app/dashboard";
     }
 
     @GetMapping("/home")
