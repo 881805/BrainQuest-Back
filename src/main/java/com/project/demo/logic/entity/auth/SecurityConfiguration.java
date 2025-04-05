@@ -29,7 +29,7 @@ public class SecurityConfiguration {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/", "/oauth2/").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/**", "/oauth2/").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
