@@ -41,3 +41,11 @@ build/resources/
 .gradle/8.7/fileHashes/resourceHashesCache.bin
 .gradle/8.7/gc.properties
 .gradle/vcs-1/gc.properties
+
+.gradle/8.7/checksums/md5-checksums.bin
+.gradle/8.7/checksums/md5-checksums.bin
+.gradle/8.7/checksums/sha1-checksums.bin
+.gradle/8.7/checksums/md5-checksums.bin
+.gradle/8.7/checksums/sha1-checksums.bin
+
+.gradle/file-system.probe

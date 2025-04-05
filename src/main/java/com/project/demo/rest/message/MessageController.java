@@ -2,6 +2,8 @@ package com.project.demo.rest.message;
 
 
 import com.project.demo.gemini.GeminiService;
+import com.project.demo.logic.entity.config.Config;
+import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.message.Message;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +27,7 @@ import java.util.Optional;
 @RequestMapping("/messages")
 @RestController
 public class MessageController {
+
 
     @Autowired
     private UserRepository userRepository;
@@ -35,40 +39,26 @@ public class MessageController {
     private GeminiService geminiService;
 
     private AdminSeeder adminSeeder;
+    @Autowired
+    private ConfigRepository configRepository;
 
     public MessageController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
         this.geminiService = geminiService;
     }
 
+
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createMessage(@RequestBody Message message, HttpServletRequest request) {
-        messageRepository.save(message); //guarda mensaje enviado por el usuario
+        Optional<User> optionalUser = userRepository.findById(message.getUser().getId());
+        message.setUser(optionalUser.get());
+        messageRepository.save(message);
 
-        String reply= geminiService.getCompletion(message.getContentText()); //respuesta de ia genera
-
-        //salvando la respuesta de la IA
-        Message replyMessage = new Message();
-        replyMessage.setContentText(reply);
-
-        replyMessage.setConversation(message.getConversation());
-
-
-        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
-       Long geminiUserId = optionalUser.get().getId();
-
-
-
-        User gemini = userRepository.findById(geminiUserId).get();
-
-        replyMessage.setUser(gemini);
-
-
-        messageRepository.save(replyMessage);
-
-        return new ResponseEntity<>(replyMessage, HttpStatus.CREATED);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
+
+
 
 
     @GetMapping

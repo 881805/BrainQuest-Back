@@ -1,5 +1,6 @@
 package com.project.demo.rest.auth;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.project.demo.logic.entity.auth.AuthenticationService;
 import com.project.demo.logic.entity.auth.JwtService;
 import com.project.demo.logic.entity.rol.Role;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RequestMapping("/auth")
@@ -33,14 +35,65 @@ public class AuthRestController {
     private RoleRepository roleRepository;
 
 
-
     private final AuthenticationService authenticationService;
-    private final JwtService jwtService;
+
+    @Autowired
+    private  JwtService jwtService;
 
     public AuthRestController(JwtService jwtService, AuthenticationService authenticationService) {
-        this.jwtService = jwtService;
+
         this.authenticationService = authenticationService;
     }
+
+    @PostMapping("/google-login")
+    public ResponseEntity<LoginResponse> loginWithGoogle(@RequestBody Map<String, String> payload) {
+        String googleToken = payload.get("token");
+
+        if (googleToken == null || googleToken.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            GoogleIdToken.Payload tokenPayload = jwtService.verifyGoogleToken(googleToken);
+
+            if (tokenPayload == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+
+            String email = tokenPayload.getEmail();
+            Optional<User> userOptional = userRepository.findByEmail(email);
+            User user;
+
+            if (userOptional.isPresent()) {
+                user = userOptional.get();
+            } else {
+                // Register the user if not exists
+                user = new User();
+                user.setEmail(email);
+                user.setGoogleId(tokenPayload.getSubject());
+                user.setProvider("Google");
+
+                // Assign default role
+                Optional<Role> role = roleRepository.findByName(RoleEnum.USER);
+                role.ifPresent(user::setRole);
+
+                user = userRepository.save(user);
+            }
+
+            String jwtToken = jwtService.generateToken(user);
+
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setToken(jwtToken);
+            loginResponse.setExpiresIn(jwtService.getExpirationTime());
+            loginResponse.setAuthUser(user);
+
+            return ResponseEntity.ok(loginResponse);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody User user) {
