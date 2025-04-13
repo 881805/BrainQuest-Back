@@ -31,10 +31,22 @@ public class TriviaController {
     @PostMapping("/generate")
     public ResponseEntity<?> generateTriviaQuestion(@RequestBody TriviaQuestion triviaRequest) {
         try {
+            // Obtener preguntas anteriores por categoría y dificultad
+            List<TriviaQuestion> preguntasPrevias = triviaQuestionRepository.findByCategoryAndDifficulty(
+                    triviaRequest.getCategory(), triviaRequest.getDifficulty());
+
+            // Armar una lista con las preguntas ya existentes
+            StringBuilder preguntasPreviasTexto = new StringBuilder();
+            for (TriviaQuestion q : preguntasPrevias) {
+                preguntasPreviasTexto.append("- ").append(q.getQuestion()).append("\n");
+            }
+
+            // Armar el prompt con las preguntas previas incluidas
             String prompt = "Eres un generador de preguntas de trivia. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
                     "{ \"question\": \"Texto de la pregunta\", \"options\": [\"Opción 1\", \"Opción 2\", \"Opción 3\", \"Opción 4\"], \"correctAnswer\": \"Opción correcta\" }\n" +
-                    "La pregunta debe ser sobre " + triviaRequest.getCategory() + " con dificultad " + triviaRequest.getDifficulty() +
-                    ". NO agregues explicaciones, texto adicional ni comentarios, SOLO el JSON. Debe empezar y terminar el request con los brackets del json para poder parsearse";
+                    "La pregunta debe ser sobre " + triviaRequest.getCategory() + " con dificultad " + triviaRequest.getDifficulty() + ".\n" +
+                    "Estas son las preguntas que ya se han hecho. NO repitas ninguna de ellas:\n" + preguntasPreviasTexto +
+                    "\nNO agregues explicaciones, texto adicional ni comentarios. SOLO responde con un JSON válido.";
 
             String reply = geminiService.getCompletion(prompt);
             System.out.println("Respuesta de Gemini: " + reply);
@@ -49,6 +61,16 @@ public class TriviaController {
 
             TriviaQuestion question = parseResponse(reply, triviaRequest.getCategory(), triviaRequest.getDifficulty());
 
+            // Verificar si la pregunta ya existía (medida de seguridad extra)
+            Optional<TriviaQuestion> existingQuestion = triviaQuestionRepository.findByQuestionAndCategoryAndDifficulty(
+                    question.getQuestion(), question.getCategory(), question.getDifficulty());
+
+            if (existingQuestion.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Ya existe una pregunta similar en la base de datos.");
+            }
+
+            // Guardar la nueva pregunta
             triviaQuestionRepository.save(question);
 
             return new ResponseEntity<>(question, HttpStatus.CREATED);
@@ -58,6 +80,8 @@ public class TriviaController {
                     .body("Error al generar la pregunta de trivia: " + e.getMessage());
         }
     }
+
+
 
     @GetMapping("/all")
     public ResponseEntity<List<TriviaQuestion>> getAllTriviaQuestions() {
