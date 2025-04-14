@@ -10,20 +10,20 @@ public class Feedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String subject;  // The subject or title of the feedback
-    private String description;  // Detailed description of the feedback
-    private String status;  // Current status of the feedback (e.g., "open", "in progress", "closed")
-    private String createdAt;  // Timestamp when the feedback was created
-    private String updatedAt;  // Timestamp when the feedback was last updated
-    private String priority;  // Priority level (e.g., "low", "medium", "high")
+    private String subject;
+    private String description;
+    private String status;
+    private String createdAt;
+    private String updatedAt;
+    private String priority;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    private User user;  // The user who submitted the feedback
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "assigned_to", referencedColumnName = "userId")
-    private User assignedTo;  // The user assigned to handle the feedback (can be null)
+    private User assignedTo;
 
     public Feedback() {
     }

@@ -45,6 +45,10 @@ dependencies {
 	implementation 'com.google.http-client:google-http-client-jackson2:1.43.3'
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter'
+
 }
 
 bootJar {
