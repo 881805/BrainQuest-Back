@@ -31,17 +31,15 @@ public class TriviaController {
     @PostMapping("/generate")
     public ResponseEntity<?> generateTriviaQuestion(@RequestBody TriviaQuestion triviaRequest) {
         try {
-            // Obtener preguntas anteriores por categoría y dificultad
+
             List<TriviaQuestion> preguntasPrevias = triviaQuestionRepository.findByCategoryAndDifficulty(
                     triviaRequest.getCategory(), triviaRequest.getDifficulty());
 
-            // Armar una lista con las preguntas ya existentes
             StringBuilder preguntasPreviasTexto = new StringBuilder();
             for (TriviaQuestion q : preguntasPrevias) {
                 preguntasPreviasTexto.append("- ").append(q.getQuestion()).append("\n");
             }
 
-            // Armar el prompt con las preguntas previas incluidas
             String prompt = "Eres un generador de preguntas de trivia. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
                     "{ \"question\": \"Texto de la pregunta\", \"options\": [\"Opción 1\", \"Opción 2\", \"Opción 3\", \"Opción 4\"], \"correctAnswer\": \"Opción correcta\" }\n" +
                     "La pregunta debe ser sobre " + triviaRequest.getCategory() + " con dificultad " + triviaRequest.getDifficulty() + ".\n" +
@@ -61,7 +59,6 @@ public class TriviaController {
 
             TriviaQuestion question = parseResponse(reply, triviaRequest.getCategory(), triviaRequest.getDifficulty());
 
-            // Verificar si la pregunta ya existía (medida de seguridad extra)
             Optional<TriviaQuestion> existingQuestion = triviaQuestionRepository.findByQuestionAndCategoryAndDifficulty(
                     question.getQuestion(), question.getCategory(), question.getDifficulty());
 
@@ -70,7 +67,6 @@ public class TriviaController {
                         .body("Ya existe una pregunta similar en la base de datos.");
             }
 
-            // Guardar la nueva pregunta
             triviaQuestionRepository.save(question);
 
             return new ResponseEntity<>(question, HttpStatus.CREATED);
@@ -153,8 +149,8 @@ public class TriviaController {
                 }
 
                 feedback = feedback.trim().replaceAll("```", "").replaceAll("(?i)^json\\s*", "").trim();
-                question.setFeedback(feedback); // opcional: podrías guardarlo si querés
-                triviaQuestionRepository.save(question); // si decidís persistirlo
+                question.setFeedback(feedback);
+                triviaQuestionRepository.save(question);
 
                 feedbackList.add(new FeedbackResponse(
                         question.getId(),
