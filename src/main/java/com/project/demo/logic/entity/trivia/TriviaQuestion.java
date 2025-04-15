@@ -14,28 +14,37 @@ public class TriviaQuestion {
     private Long id;
 
     private String question;
+
     private String correctAnswer;
 
     @ElementCollection
-    private List<String> options;
+    private List<Option> options;
 
     private String difficulty;
+
     private String category;
+
     @ManyToOne
     private Game game;
-    public TriviaQuestion() {
 
-    }
+    private String userAnswer;
 
-    public TriviaQuestion(Long id, String question, String correctAnswer, List<String> options, String difficulty, String category) {
+    @Column(length = 1000)
+    private String feedback;
+
+    public TriviaQuestion() {}
+
+    public TriviaQuestion(Long id, String question, String correctAnswer, List<Option> options, String difficulty, String category, Game game, String userAnswer, String feedback) {
         this.id = id;
         this.question = question;
         this.correctAnswer = correctAnswer;
         this.options = options;
         this.difficulty = difficulty;
         this.category = category;
+        this.game = game;
+        this.userAnswer = userAnswer;
+        this.feedback = feedback;
     }
-
 
     public Long getId() {
         return id;
@@ -61,11 +70,11 @@ public class TriviaQuestion {
         this.correctAnswer = correctAnswer;
     }
 
-    public List<String> getOptions() {
+    public List<Option> getOptions() {
         return options;
     }
 
-    public void setOptions(List<String> options) {
+    public void setOptions(List<Option> options) {
         this.options = options;
     }
 
@@ -83,5 +92,29 @@ public class TriviaQuestion {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public String getUserAnswer() {
+        return userAnswer;
+    }
+
+    public void setUserAnswer(String userAnswer) {
+        this.userAnswer = userAnswer;
+    }
+
+    public String getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
     }
 }
