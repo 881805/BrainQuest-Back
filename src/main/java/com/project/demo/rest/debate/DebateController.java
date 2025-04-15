@@ -187,6 +187,7 @@ public class DebateController {
 
         Long winnerId = game.getWinner().getId();
         Optional<User> winnerUser = userRepository.findById(winnerId);
+        foundGame.setPointsEarnedPlayer1(Math.toIntExact(score));
         winnerUser.get().setExperience(score+winnerUser.get().getExperience());
         userRepository.save(winnerUser.get());
 

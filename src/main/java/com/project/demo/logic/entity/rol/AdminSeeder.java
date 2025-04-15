@@ -30,7 +30,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         this.createSuperAdministrator();
-        this.createAIUser();
+//        this.createAIUser();
     }
 
 
@@ -59,22 +59,22 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
         userRepository.save(user);
     }
-    private void createAIUser(){
-        User aiUser = new User();
-        aiUser.setName("Gemini");
-        aiUser.setLastname("Google");
-        aiUser.setEmail("gemini.google@gmail.com");
-        aiUser.setPassword(passwordEncoder.encode("123456976345425843252sdfgsr@D!"));
-        aiUser.setExperience(0L);
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
-        Optional<User> optionalUser = userRepository.findByEmail(aiUser.getEmail());
-
-        aiUser.setRole(optionalRole.get());
-
-        if ( optionalUser.isPresent()) {
-            return;
-        }
-
-        userRepository.save(aiUser);
-    }
+//    private void createAIUser(){
+//        User aiUser = new User();
+//        aiUser.setName("Gemini");
+//        aiUser.setLastname("Google");
+//        aiUser.setEmail("gemini.google@gmail.com");
+//        aiUser.setPassword(passwordEncoder.encode("123456976345425843252sdfgsr@D!"));
+//        aiUser.setExperience(0L);
+//        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+//        Optional<User> optionalUser = userRepository.findByEmail(aiUser.getEmail());
+//
+//        aiUser.setRole(optionalRole.get());
+//
+//        if ( optionalUser.isPresent()) {
+//            return;
+//        }
+//
+//        userRepository.save(aiUser);
+//    }
 }
