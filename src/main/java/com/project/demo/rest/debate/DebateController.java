@@ -70,17 +70,24 @@ public class DebateController {
     public ResponseEntity<?> messageSent(@RequestBody Game game, HttpServletRequest request) {
         List<Message> gameMessages = game.getConversation().getMessages();
         Message messageToAdd = null;
-        for (Message message : gameMessages) {
-            if (message.getId() == gameMessages.size()) {
-                messageToAdd = message;
-            }
-        }
-        messageRepository.save(messageToAdd);
+        String replyPrompt = "";
+       if (gameMessages != null) {
+           for (Message message : gameMessages) {
+               if (message.getId() == gameMessages.size()) {
+                   messageToAdd = message;
+               }
+           }
+           messageRepository.save(messageToAdd);
 
-        String replyPrompt = game.getConversation().getMessages().toString() + " En torno a la conversacion anterior da una respuesta " +
-                "en torno al tema de debate considerando el mensaje del jugador. El id 2 representa al sistema. Si no hay id dos es el mensaje inicial y deberias responder solo con un contraatque a ese debate." +
-                "Manten la respuesta en menos de 5 oraciones y en torno a la conversacion. Debe contener solo tu respuesta al debate no deberia de decir 'Tema de discusion'";
-        String reply = geminiService.getCompletion(replyPrompt);
+           replyPrompt = game.getConversation().getMessages().toString() + " En torno a la conversacion anterior da una respuesta " +
+                   "en torno al tema de debate considerando el mensaje del jugador. El id 2 representa al sistema. Si no hay id dos es el mensaje inicial y deberias responder solo con un contraatque a ese debate." +
+                   "Manten la respuesta en menos de 5 oraciones y en torno a la conversacion. Debe contener solo tu respuesta al debate no deberia de decir 'Tema de discusion'";
+       }else {
+           replyPrompt =
+                   "en torno al tema de debate considerando el mensaje del jugador. El id 2 representa al sistema. Si no hay id dos es el mensaje inicial y deberias responder solo con un contraatque a ese debate." +
+                   "Manten la respuesta en menos de 5 oraciones y en torno a la conversacion. Debe contener solo tu respuesta al debate no deberia de decir 'Tema de discusion'";
+       }
+           String reply = geminiService.getCompletion(replyPrompt);
 
         if (reply.length() > 1000) {
             reply = reply.substring(0, 1000);
