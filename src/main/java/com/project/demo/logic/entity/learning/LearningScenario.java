@@ -1,7 +1,7 @@
 package com.project.demo.logic.entity.learning;
 
+
 import com.project.demo.logic.entity.game.Game;
-import com.project.demo.logic.entity.trivia.Option;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,41 +14,69 @@ public class LearningScenario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 2000)
-    private String story; // Historia generada por la IA
-
-    private String question; // Pregunta reflexiva basada en la historia
-
-    @ElementCollection
-    private List<Option> options; // Opciones generadas por la IA
-
-    private String selectedOption; // Respuesta elegida por el usuario
-
+    // Narrativa breve para contextualizar el escenario
     @Column(length = 1000)
-    private String feedback; // Feedback de la IA basado en la opción elegida
+    private String narrative;
 
-    private String topic; // Tema de aprendizaje (Ej: ética médica, reciclaje, etc.)
+    // Pregunta principal del escenario
+    private String question;
 
-    private int step; // Paso del escenario progresivo
+    // Opción correcta
+    private String correctAnswer;
 
-    private boolean completed;
+    // Opciones disponibles
+    @ElementCollection
+    private List<LearningOption> options;
 
+    // Feedback generado por IA tras respuesta incorrecta
+    @Column(length = 1000)
+    private String feedback;
+
+    // Opción seleccionada por el usuario (si ya respondió)
+    private String userAnswer;
+
+    // Estado de cada opción (si fue bloqueada tras fallo)
+    @ElementCollection
+    private List<String> blockedOptions;
+
+    // Relación con el "juego" o sesión actual
     @ManyToOne
     private Game game;
 
-    public LearningScenario() {}
+    // Índice o posición en la secuencia de aprendizaje
+    private Integer stepNumber;
 
-    public LearningScenario(Long id, String story, String question, List<Option> options, String selectedOption, String feedback, String topic, int step, boolean completed, Game game) {
+    // Tema al que pertenece este escenario
+    private String topic;
+
+    @Column(nullable = false)
+    private boolean completed = false;
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setUserAnswer(String userAnswer) {
+        this.userAnswer = userAnswer;
+        this.completed = userAnswer != null && userAnswer.equalsIgnoreCase(this.correctAnswer);
+    }
+
+    public LearningScenario() {
+    }
+
+    public LearningScenario(Long id, String narrative, String question, String correctAnswer, List<LearningOption> options, String feedback, String userAnswer, List<String> blockedOptions, Game game, Integer stepNumber, String topic, boolean completed) {
         this.id = id;
-        this.story = story;
+        this.narrative = narrative;
         this.question = question;
+        this.correctAnswer = correctAnswer;
         this.options = options;
-        this.selectedOption = selectedOption;
         this.feedback = feedback;
-        this.topic = topic;
-        this.step = step;
-        this.completed = completed;
+        this.userAnswer = userAnswer;
+        this.blockedOptions = blockedOptions;
         this.game = game;
+        this.stepNumber = stepNumber;
+        this.topic = topic;
+        this.completed = completed;
     }
 
     public Long getId() {
@@ -59,12 +87,12 @@ public class LearningScenario {
         this.id = id;
     }
 
-    public String getStory() {
-        return story;
+    public String getNarrative() {
+        return narrative;
     }
 
-    public void setStory(String story) {
-        this.story = story;
+    public void setNarrative(String narrative) {
+        this.narrative = narrative;
     }
 
     public String getQuestion() {
@@ -75,20 +103,20 @@ public class LearningScenario {
         this.question = question;
     }
 
-    public List<Option> getOptions() {
+    public String getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
+    }
+
+    public List<LearningOption> getOptions() {
         return options;
     }
 
-    public void setOptions(List<Option> options) {
+    public void setOptions(List<LearningOption> options) {
         this.options = options;
-    }
-
-    public String getSelectedOption() {
-        return selectedOption;
-    }
-
-    public void setSelectedOption(String selectedOption) {
-        this.selectedOption = selectedOption;
     }
 
     public String getFeedback() {
@@ -99,28 +127,16 @@ public class LearningScenario {
         this.feedback = feedback;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getUserAnswer() {
+        return userAnswer;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public List<String> getBlockedOptions() {
+        return blockedOptions;
     }
 
-    public int getStep() {
-        return step;
-    }
-
-    public void setStep(int step) {
-        this.step = step;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setBlockedOptions(List<String> blockedOptions) {
+        this.blockedOptions = blockedOptions;
     }
 
     public Game getGame() {
@@ -129,5 +145,25 @@ public class LearningScenario {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public Integer getStepNumber() {
+        return stepNumber;
+    }
+
+    public void setStepNumber(Integer stepNumber) {
+        this.stepNumber = stepNumber;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }

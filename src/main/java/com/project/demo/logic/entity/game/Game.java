@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.demo.logic.entity.conversation.Conversation;
 import com.project.demo.logic.entity.gameType.GameType;
+import com.project.demo.logic.entity.learning.LearningScenario;
 import com.project.demo.logic.entity.trivia.TriviaQuestion;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
@@ -30,6 +31,10 @@ public class Game {
     private TriviaQuestion question;
 
     @ManyToOne
+    @JoinColumn(name = "learning_question", referencedColumnName = "id", nullable = true)
+    private LearningScenario learningScenario;
+
+    @ManyToOne
     @JoinColumn(name = "game_type", referencedColumnName = "id")
     private GameType gameType;
 
@@ -52,9 +57,10 @@ public class Game {
 
     private long elapsedTurns;
 
-    public Game(Long id, Conversation conversation, User winner, GameType gameType, boolean isOngoing, int pointsEarnedPlayer1, int pointsEarnedPlayer2) {
+    public Game(Long id, Conversation conversation,LearningScenario learningScenario, User winner, GameType gameType, boolean isOngoing, int pointsEarnedPlayer1, int pointsEarnedPlayer2) {
         this.id = id;
         this.conversation = conversation;
+        this.learningScenario = learningScenario;
         this.winner = winner;
         this.gameType = gameType;
         this.isOngoing = isOngoing;
@@ -163,6 +169,14 @@ public class Game {
 
     public void setExpirationTime(Instant expirationTime) {
         this.expirationTime = expirationTime;
+    }
+
+    public LearningScenario getLearningScenario() {
+        return learningScenario;
+    }
+
+    public void setLearningScenario(LearningScenario learningScenario) {
+        this.learningScenario = learningScenario;
     }
 
     @Override
