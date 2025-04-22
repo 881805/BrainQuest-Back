@@ -14,39 +14,29 @@ public class LearningScenario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Narrativa breve para contextualizar el escenario
     @Column(length = 1000)
     private String narrative;
 
-    // Pregunta principal del escenario
     private String question;
 
-    // Opción correcta
     private String correctAnswer;
 
-    // Opciones disponibles
     @ElementCollection
     private List<LearningOption> options;
 
-    // Feedback generado por IA tras respuesta incorrecta
     @Column(length = 1000)
     private String feedback;
 
-    // Opción seleccionada por el usuario (si ya respondió)
     private String userAnswer;
 
-    // Estado de cada opción (si fue bloqueada tras fallo)
     @ElementCollection
     private List<String> blockedOptions;
 
-    // Relación con el "juego" o sesión actual
     @ManyToOne
     private Game game;
 
-    // Índice o posición en la secuencia de aprendizaje
     private Integer stepNumber;
 
-    // Tema al que pertenece este escenario
     private String topic;
 
     @Column(nullable = false)

@@ -6,7 +6,7 @@ import jakarta.persistence.Embeddable;
 public class LearningOption {
     private String text;
     private boolean isCorrect;
-    private boolean isBlocked; // true si el usuario falló y se bloqueó esta opción
+    private boolean isBlocked;
 
     public LearningOption() {
     }

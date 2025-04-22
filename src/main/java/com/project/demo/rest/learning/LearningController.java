@@ -33,8 +33,9 @@ public class LearningController {
     public ResponseEntity<?> generateScenario(@RequestBody LearningScenarioRequest request) {
         String topic = request.getTopic();
         int step = request.getStep();
+
         try {
-            // Obtener pasos previos para evitar repeticiones
+
             List<LearningScenario> prevSteps = learningRepository.findByTopicOrderByStepNumberAsc(topic);
 
             StringBuilder prevQuestionsText = new StringBuilder();
@@ -42,26 +43,34 @@ public class LearningController {
                 prevQuestionsText.append("- ").append(scenario.getQuestion()).append("\n");
             }
 
+            String lastNarrative = prevSteps.isEmpty() ? "" : prevSteps.get(prevSteps.size() - 1).getNarrative();
+
             String prompt = String.format("""
-        Eres un experto en diseño de experiencias de aprendizaje interactivas. Tu tarea es generar un escenario educativo para el tema: "%s".
+            Eres un experto en diseño de experiencias de aprendizaje interactivas. Tu tarea es generar un *nuevo paso* de un escenario educativo progresivo para el tema: "%s".
 
-        Formato de salida (solo JSON, sin texto adicional):
-        {
-          "narrative": "Una breve historia o contexto del escenario (2 a 3 líneas)",
-          "question": "Una pregunta clave basada en la narrativa",
-          "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
-          "correctAnswer": "Texto exacto de la opción correcta"
-        }
+            Este es el paso #%d de la secuencia. La historia debe tener continuidad narrativa con el paso anterior.
 
-        Este es el paso #%d del aprendizaje progresivo. Evita repetir las siguientes preguntas ya usadas:
-        %s
+            Paso anterior (para continuar la historia):
+            "%s"
 
-        Instrucciones adicionales:
-        - No devuelvas explicaciones, solo el JSON.
-        - Las opciones deben ser creíbles.
-        - Asegúrate de que la pregunta se relacione con la narrativa.
-        - Usa un tono educativo, claro y sin tecnicismos innecesarios.
-        """, topic, step, prevQuestionsText);
+            Preguntas ya usadas para evitar repeticiones:
+            %s
+
+            Formato de salida (solo JSON, sin texto adicional):
+            {
+              "narrative": "Una breve historia o contexto del escenario (2 a 3 líneas)",
+              "question": "Una pregunta clave basada en la narrativa",
+              "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
+              "correctAnswer": "Texto exacto de la opción correcta"
+            }
+
+            Instrucciones adicionales:
+            - No repitas narrativa ni preguntas previas.
+            - Mantén la historia conectada y coherente entre pasos.
+            - Asegúrate de que la pregunta esté basada directamente en la narrativa.
+            - Usa un lenguaje educativo y amigable.
+            - NO agregues ningún texto explicativo fuera del JSON.
+        """, topic, step, lastNarrative, prevQuestionsText);
 
             String reply = geminiService.getCompletion(prompt).trim()
                     .replaceAll("```", "")
@@ -74,7 +83,6 @@ public class LearningController {
 
             LearningScenario scenario = parseScenarioResponse(reply, topic, step);
 
-            // Guardar nuevo escenario generado
             learningRepository.save(scenario);
 
             return new ResponseEntity<>(scenario, HttpStatus.CREATED);
@@ -84,7 +92,6 @@ public class LearningController {
                     .body("Error generando escenario: " + e.getMessage());
         }
     }
-
 
     @GetMapping("/topic/{topic}")
     public ResponseEntity<List<LearningScenario>> getScenariosByTopic(@PathVariable String topic) {
@@ -102,14 +109,12 @@ public class LearningController {
         LearningScenario scenario = optional.get();
         String correct = scenario.getCorrectAnswer();
 
-        // Si la respuesta del usuario es correcta
         if (userAnswer.equalsIgnoreCase(correct)) {
             scenario.setUserAnswer(userAnswer);
             learningRepository.save(scenario);
             return ResponseEntity.ok("¡Respuesta correcta!");
         }
 
-        // Marcar la opción incorrecta como bloqueada
         for (LearningOption opt : scenario.getOptions()) {
             if (opt.getText().equalsIgnoreCase(userAnswer)) {
                 opt.setBlocked(true);
@@ -117,49 +122,41 @@ public class LearningController {
             }
         }
 
-        // Crear el prompt para Gemini
         String prompt = String.format("""
-    Eres un tutor educativo. El estudiante eligió una opción incorrecta en una pregunta de aprendizaje progresivo.
-
-    Escenario: %s
-    Pregunta: %s
-    Tu respuesta: %s
-    Respuesta correcta: %s
-
-    Explica brevemente por qué la respuesta correcta es la adecuada y la del usuario es incorrecta (máx. 3 líneas).
-    Responde solo con el texto explicativo, sin encabezados ni enumeraciones.
-    """, scenario.getNarrative(), scenario.getQuestion(), userAnswer, correct);
+        Eres un tutor educativo. El estudiante eligió una opción incorrecta en una pregunta de aprendizaje progresivo.
+    
+        Escenario: %s
+        Pregunta: %s
+        Tu respuesta: %s
+        Respuesta correcta: %s
+    
+        Explica brevemente por qué la respuesta correcta es la adecuada y la del usuario es incorrecta (máx. 3 líneas).
+        Responde solo con el texto explicativo, sin encabezados ni enumeraciones.
+        """, scenario.getNarrative(), scenario.getQuestion(), userAnswer, correct);
 
         String feedback;
         try {
-            // Llamada a Gemini para obtener el feedback
             feedback = geminiService.getCompletion(prompt).trim();
 
-            // Validación del feedback
             if (feedback.isBlank()) {
                 feedback = "No se pudo generar una explicación válida. Intenta nuevamente.";
             }
 
         } catch (Exception e) {
-            // En caso de error, devolvemos un mensaje genérico
             feedback = "No se pudo generar la explicación debido a un error en el servicio.";
         }
 
-        // Limpiar cualquier formato extraño
         feedback = feedback.replaceAll("```", "").replaceAll("(?i)^json\\s*", "").trim();
 
-        // Guardar el feedback en el escenario
         scenario.setFeedback(feedback);
         learningRepository.save(scenario);
 
-        // Devolver la respuesta con el feedback y la opción bloqueada
         Map<String, Object> response = new HashMap<>();
         response.put("feedback", feedback);
         response.put("blockedOption", userAnswer);
 
         return ResponseEntity.ok(response);
     }
-
 
     private LearningScenario parseScenarioResponse(String response, String topic, Integer step) {
         try {
