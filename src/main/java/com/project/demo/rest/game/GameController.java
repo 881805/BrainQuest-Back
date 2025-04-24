@@ -88,6 +88,10 @@ public class GameController {
         game.setQuestion(triviaQuestion);
         game.setGameType(gameType);
 
+        if(game.getPointsEarnedPlayer1()>0){
+            winner.setExperience(winner.getExperience()+game.getPointsEarnedPlayer1());
+            userRepository.save(winner);
+        }
 
         gameRepository.save(game);
 
