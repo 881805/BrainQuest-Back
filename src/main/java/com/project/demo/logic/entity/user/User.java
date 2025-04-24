@@ -2,6 +2,7 @@ package com.project.demo.logic.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.demo.logic.entity.achievement.Achievement;
 import com.project.demo.logic.entity.level.Level;
 import com.project.demo.logic.entity.rol.Role;
 import jakarta.persistence.*;
@@ -37,6 +38,10 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "level_id", referencedColumnName = "id")
     private Level level;
+
+    @ManyToOne
+    @JoinColumn(name = "achievement_id", referencedColumnName = "id")
+    private Achievement achievement;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
@@ -195,6 +200,13 @@ public class User implements UserDetails {
         return role;
     }
 
+    public Achievement getAchievement() {
+        return achievement;
+    }
+
+    public void setAchievement(Achievement achievement) {
+        this.achievement = achievement;
+    }
 
     public User setRole(Role role) {
         this.role = role;
