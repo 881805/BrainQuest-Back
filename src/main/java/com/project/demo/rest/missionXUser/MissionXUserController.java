@@ -72,27 +72,27 @@ public class MissionXUserController {
     @PostMapping("/assign/{userId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createMission(@PathVariable Long userId, HttpServletRequest request) {
-        int page= 1;
-        int size= 10;
-        ArrayList<MissionXUser> addedMissions = new ArrayList<MissionXUser>();
+        int page = 1;
+        int size = 10;
+
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<MissionXUser> missionPage = missionXUserRepository.findByUserIdAndActiveMission(userId, pageable);
-        if(missionPage.getContent().size()<4){
+        ArrayList<MissionXUser> addedMissions = null;
+        if (missionPage.getContent().size() < 4) {
             int loopAmmount = 4 - missionPage.getContent().size();
-            if(loopAmmount <=0){
+            if (loopAmmount <= 0) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             User user = userRepository.findById(userId).get();
             List<Mission> missionList = missionRepository.findByIsActiveTrue();
 
 
-            for(int i = 0; i< loopAmmount ; i++){
-                addedMissions.add(missionXUserRepository.save(missionXUserService.randomizeMissions(user, missionList)));
-                }
-            }
+            addedMissions = (ArrayList<MissionXUser>) missionXUserService.randomizeMissions(user, missionList, missionPage.getContent(), loopAmmount);
 
-        return new ResponseEntity<>(addedMissions, HttpStatus.CREATED);
+
         }
+        return new ResponseEntity<>(addedMissions, HttpStatus.CREATED);
+    }
 
 
     @GetMapping("/{userId}")

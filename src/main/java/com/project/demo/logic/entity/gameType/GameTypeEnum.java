@@ -5,5 +5,6 @@ public enum GameTypeEnum {
     DEBATE,
     MULTIPLAYER_DEBATE,
     INTERVIEW,
-    STORYBUILDER
+    STORYBUILDER,
+    TYPING
 }
