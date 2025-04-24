@@ -76,7 +76,7 @@ public class MissionXUserController {
         int size = 10;
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<MissionXUser> missionPage = missionXUserRepository.findByUserIdAndActiveMission(userId, pageable);
+        Page<MissionXUser> missionPage = missionXUserRepository.findByUserIdAndActiveMissionAndIsCompletedIsFalse(userId, pageable);
         ArrayList<MissionXUser> addedMissions = null;
         if (missionPage.getContent().size() < 4) {
             int loopAmmount = 4 - missionPage.getContent().size();
@@ -105,7 +105,7 @@ public class MissionXUserController {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         // Pass conversationId and pageable to the repository method
-        Page<MissionXUser> missionPage = missionXUserRepository.findByUserIdAndActiveMission(userId, pageable);
+        Page<MissionXUser> missionPage = missionXUserRepository.findByUserIdAndActiveMissionAndIsCompletedIsFalse(userId, pageable);
 
 
         Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
@@ -135,7 +135,7 @@ public class MissionXUserController {
         updatedMission.setProgress(mission.getProgress());
 
         //guarda la experiencia del usuario en caso de una mision ser completada
-        if(mission.getProgress()==foundMission.get().getMission().getObjective().getAmmountSuccesses() && foundMission.get().getMission().getIsActive()==true) {
+        if(mission.getProgress()>=foundMission.get().getMission().getObjective().getAmmountSuccesses() && foundMission.get().getMission().getIsActive()==true) {
             User foundUser = userRepository.getById(updatedMission.getUser().getId());
 
             foundUser.setExperience(foundUser.getExperience()+foundMission.get().getMission().getExperience());
