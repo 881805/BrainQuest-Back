@@ -56,16 +56,26 @@ public class InterviewController {
     public ResponseEntity<?> simulateInterview(@RequestBody Game game, HttpServletRequest request) {
         User user = game.getWinner();
 
-        Optional<AiConfiguration> aiConfigOpt = aiConfigurationRepository.findByUserId(user.getId()).stream().findFirst();
-        String promptConfig = aiConfigOpt.map(AiConfiguration::getConfiguracion).orElse("");
+        String promptConfig="";
+        List<AiConfiguration> aiConfigs = aiConfigurationRepository.findByUserId(user.getId());
+        for(AiConfiguration config : aiConfigs){
+            promptConfig += ", ";
+            promptConfig += config.getConfiguracion();
+        }
 
-        List<Message> messages = game.getConversation().getMessages();
-        Message userMessage = messages.get(messages.size() - 1);
-        messageRepository.save(userMessage);
+        List<Message> gameMessages = game.getConversation().getMessages();
+        Message messageToAdd = null;
+        for (Message message : gameMessages) {
+            if (message.getId() == gameMessages.size()) {
+                messageToAdd = message;
+            }
+        }
+        messageRepository.save(messageToAdd);
 
-        String interviewPrompt = messages.toString() +
+        String interviewPrompt = gameMessages.toString() +
                 " Eres un entrevistador profesional. Basado en las respuestas anteriores y el escenario seleccionado, haz una nueva pregunta relacionada." +
-                " No repitas preguntas, mantén el formato profesional, breve y relevante. Configuración de IA: " + promptConfig;
+                " No repitas preguntas, mantén el formato profesional, breve y relevante. Que tu respuesta sea solamente" +
+                " una respuesta a lo que dijo el usuario + una pregunta relacionada. Configuración de IA: " + promptConfig;
 
         String reply = geminiService.getCompletion(interviewPrompt);
         reply = reply.length() > 1000 ? reply.substring(0, 1000) : reply;
@@ -121,14 +131,19 @@ public class InterviewController {
         feedbackMessage.setUser(gemini);
         messageRepository.save(feedbackMessage);
 
-        game.setIsOngoing(false);
-        game.setPointsEarnedPlayer1(Math.toIntExact(score));
-        gameRepository.save(game);
+        Optional<Game> optionalGame = gameRepository.findById(game.getId());
+        Game foundGame = null;
+        if (optionalGame.isPresent()) {
+            foundGame = optionalGame.get();
+            foundGame.setIsOngoing(false);
+            gameRepository.save(foundGame);
+        }
 
-        User winner = userRepository.findById(game.getWinner().getId()).orElseThrow();
-        winner.setExperience(score + winner.getExperience());
-        userRepository.save(winner);
-
-        return new ResponseEntity<>(game, HttpStatus.CREATED);
+        Long winnerId = game.getWinner().getId();
+        Optional<User> winnerUser = userRepository.findById(winnerId);
+        foundGame.setPointsEarnedPlayer1(Math.toIntExact(score));
+        winnerUser.get().setExperience(score+winnerUser.get().getExperience());
+        userRepository.save(winnerUser.get());
+        return new ResponseEntity<>(foundGame, HttpStatus.CREATED);
     }
 }

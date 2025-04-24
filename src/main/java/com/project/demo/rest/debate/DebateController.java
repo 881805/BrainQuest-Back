@@ -184,18 +184,15 @@ public class DebateController {
         messageRepository.save(replyMessageModerator);
 
 
-        // Extract values
 
 
-        //actualizar juego para que termine
+
         Optional<Game> optionalGame = gameRepository.findById(game.getId());
         Game foundGame = null;
         if (optionalGame.isPresent()) {
             foundGame = optionalGame.get();
             foundGame.setIsOngoing(false);
             gameRepository.save(foundGame);
-
-
         }
 
         Long winnerId = game.getWinner().getId();
