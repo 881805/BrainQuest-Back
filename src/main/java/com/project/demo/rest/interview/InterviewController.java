@@ -1,14 +1,18 @@
 package com.project.demo.rest.interview;
 
 import com.project.demo.gemini.GeminiService;
+import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
+import com.project.demo.logic.entity.aiConfiguration.AiConfigurationRepository;
 import com.project.demo.logic.entity.conversation.ConversationRepository;
-import com.project.demo.logic.entity.interview.Interview;
-import com.project.demo.logic.entity.interview.InterviewRepository;
+import com.project.demo.logic.entity.game.Game;
+import com.project.demo.logic.entity.game.GameRepository;
 import com.project.demo.logic.entity.message.Message;
 import com.project.demo.logic.entity.message.MessageRepository;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,91 +34,101 @@ public class InterviewController {
     private MessageRepository messageRepository;
 
     @Autowired
-    private InterviewRepository interviewRepository;
+    private GeminiService geminiService;
 
     @Autowired
     private ConversationRepository conversationRepository;
 
     @Autowired
-    private GeminiService geminiService;
+    private GameRepository gameRepository;
+
+    @Autowired
+    private AiConfigurationRepository aiConfigurationRepository;
+
+    public InterviewController(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+        this.geminiService = geminiService;
+    }
 
     @Transactional
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> sendInterviewMessage(@RequestBody Interview interview, HttpServletRequest request) {
-        List<Message> messages = interview.getConversation().getMessages();
-        Message latestMessage = null;
+    public ResponseEntity<?> simulateInterview(@RequestBody Game game, HttpServletRequest request) {
+        User user = game.getWinner();
 
-        if (messages != null && !messages.isEmpty()) {
-            latestMessage = messages.get(messages.size() - 1); // último mensaje enviado por el usuario
-            messageRepository.save(latestMessage);
+        Optional<AiConfiguration> aiConfigOpt = aiConfigurationRepository.findByUserId(user.getId()).stream().findFirst();
+        String promptConfig = aiConfigOpt.map(AiConfiguration::getConfiguracion).orElse("");
+
+        List<Message> messages = game.getConversation().getMessages();
+        Message userMessage = messages.get(messages.size() - 1);
+        messageRepository.save(userMessage);
+
+        String interviewPrompt = messages.toString() +
+                " Eres un entrevistador profesional. Basado en las respuestas anteriores y el escenario seleccionado, haz una nueva pregunta relacionada." +
+                " No repitas preguntas, mantén el formato profesional, breve y relevante. Configuración de IA: " + promptConfig;
+
+        String reply = geminiService.getCompletion(interviewPrompt);
+        reply = reply.length() > 1000 ? reply.substring(0, 1000) : reply;
+
+        Message aiMessage = new Message();
+        aiMessage.setContentText(reply);
+        aiMessage.setConversation(game.getConversation());
+        aiMessage.setIsSent(true);
+        User gemini = userRepository.findByEmail("gemini.google@gmail.com").orElseThrow();
+        aiMessage.setUser(gemini);
+
+        messageRepository.save(aiMessage);
+
+        if (game.getElapsedTurns() >= game.getMaxTurns()) {
+            return generateInterviewFeedback(game, request);
         }
 
-        String prompt = messages.toString() +
-                " Eres un entrevistador profesional. Responde como si estuvieras conduciendo una entrevista seria. Limita tu respuesta a 3 oraciones." +
-                " No repitas las preguntas anteriores. Mantén el foco en evaluar las habilidades y experiencias del usuario de manera profesional.";
-
-        String reply = geminiService.getCompletion(prompt);
-
-        if (reply.length() > 1000) {
-            reply = reply.substring(0, 1000);
-        }
-
-        Message replyMessage = new Message();
-        replyMessage.setContentText(reply);
-        replyMessage.setConversation(interview.getConversation());
-        replyMessage.setIsSent(true);
-        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
-        User gemini = optionalUser.get();
-        replyMessage.setUser(gemini);
-
-        messageRepository.save(replyMessage);
-
-        if (interview.getElapsedTurns() >= interview.getMaxTurns()) {
-            return finishInterview(interview);
-        }
-
-        incrementTurns(interview);
+        incrementTurn(game);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    public void incrementTurns(Interview interview) {
-        interview.setElapsedTurns(interview.getElapsedTurns() + 1);
-        interviewRepository.save(interview);
+    private void incrementTurn(Game game) {
+        game.setElapsedTurns(game.getElapsedTurns() + 1);
+        gameRepository.save(game);
     }
 
-    public ResponseEntity<?> finishInterview(@RequestBody Interview interview) {
-        List<Message> messages = interview.getConversation().getMessages();
-        String context = messages.toString();
+    public ResponseEntity<?> generateInterviewFeedback(@RequestBody Game game, HttpServletRequest request) {
+        List<Message> messages = game.getConversation().getMessages();
+        String conversationString = messages.toString();
 
-        String prompt = context +
-                " Eres un evaluador de entrevistas. Escribe un resumen breve de retroalimentación profesional para el candidato." +
-                " Empieza el texto con 'Retroalimentación: ' y limita tu respuesta a 5 oraciones. Sé constructivo pero honesto. Usa español.";
+        String feedbackPrompt = conversationString +
+                " Genera un JSON con el siguiente formato: {feedback: '', score: 0}. " +
+                "El feedback debe comenzar con 'Retroalimentación: ' e incluir una puntuación del 0 al 500 con el texto 'Tu puntuación es:'. En español, por favor.";
 
-        String reply = geminiService.getCompletion(prompt);
+        String reply = geminiService.getCompletion(feedbackPrompt);
+        String cleanedJson = reply.replaceAll("```json|```", "").trim();
 
-        if (reply.length() > 1000) {
-            reply = reply.substring(0, 1000);
+        String feedback = "";
+        Long score = 0L;
+        try {
+            JSONObject json = new JSONObject(cleanedJson);
+            feedback = json.getString("feedback");
+            score = json.getLong("score");
+        } catch (JSONException e) {
+            System.out.println(e);
         }
 
         Message feedbackMessage = new Message();
-        feedbackMessage.setContentText(reply);
-        feedbackMessage.setConversation(interview.getConversation());
+        feedbackMessage.setContentText(feedback);
+        feedbackMessage.setConversation(game.getConversation());
         feedbackMessage.setIsSent(true);
-        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
-        User gemini = optionalUser.get();
+        User gemini = userRepository.findByEmail("gemini.google@gmail.com").orElseThrow();
         feedbackMessage.setUser(gemini);
-
         messageRepository.save(feedbackMessage);
 
-        Optional<Interview> interviewOptional = interviewRepository.findById(interview.getId());
-        if (interviewOptional.isPresent()) {
-            Interview finishedInterview = interviewOptional.get();
-            finishedInterview.setOngoing(false);
-            interviewRepository.save(finishedInterview);
-            return new ResponseEntity<>(finishedInterview, HttpStatus.CREATED);
-        }
+        game.setIsOngoing(false);
+        game.setPointsEarnedPlayer1(Math.toIntExact(score));
+        gameRepository.save(game);
 
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        User winner = userRepository.findById(game.getWinner().getId()).orElseThrow();
+        winner.setExperience(score + winner.getExperience());
+        userRepository.save(winner);
+
+        return new ResponseEntity<>(game, HttpStatus.CREATED);
     }
 }

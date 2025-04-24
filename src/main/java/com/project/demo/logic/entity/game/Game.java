@@ -23,9 +23,11 @@ public class Game {
     @JoinColumn(name = "conversation_id", referencedColumnName = "id", nullable = true)
     private Conversation conversation;
 
+
     @ManyToOne
     @JoinColumn(name = "winner", referencedColumnName = "userId")
     private User winner;
+
     @ManyToOne
     @JoinColumn(name = "trivia_question", referencedColumnName = "id", nullable = true)
     private TriviaQuestion question;
@@ -178,6 +180,7 @@ public class Game {
     public void setLearningScenario(LearningScenario learningScenario) {
         this.learningScenario = learningScenario;
     }
+
 
     @Override
     public String toString() {

@@ -2,6 +2,8 @@ package com.project.demo.rest.debate;
 
 
 import com.project.demo.gemini.GeminiService;
+import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
+import com.project.demo.logic.entity.aiConfiguration.AiConfigurationRepository;
 import com.project.demo.logic.entity.config.Config;
 import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.conversation.Conversation;
@@ -55,9 +57,11 @@ public class DebateController {
     @Autowired
     private ConversationRepository conversationRepository;
 
-
     @Autowired
     private GameRepository gameRepository;
+
+    @Autowired
+    private AiConfigurationRepository aiConfigurationRepository;
 
     public DebateController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
@@ -68,6 +72,17 @@ public class DebateController {
     @PostMapping()
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> messageSent(@RequestBody Game game, HttpServletRequest request) {
+        User user = game.getWinner();
+
+
+        String promptConfig="";
+        List<AiConfiguration> aiConfigs = aiConfigurationRepository.findByUserId(user.getId());
+        for(AiConfiguration config : aiConfigs){
+            promptConfig += ", ";
+            promptConfig += config.getConfiguracion();
+        }
+
+
         List<Message> gameMessages = game.getConversation().getMessages();
         Message messageToAdd = null;
         for (Message message : gameMessages) {
@@ -77,15 +92,16 @@ public class DebateController {
         }
         messageRepository.save(messageToAdd);
 
+
         String replyPrompt = game.getConversation().getMessages().toString() + " En torno a la conversacion anterior da una respuesta " +
-                "en torno al tema de debate considerando el mensaje del jugador. El id 2 representa al sistema. Si no hay id dos es el mensaje inicial y deberias responder solo con un contraatque a ese debate." +
-                "Manten la respuesta en menos de 5 oraciones y en torno a la conversacion. Debe contener solo tu respuesta al debate no deberia de decir 'Tema de discusion'";
+                "en torno al tema de debate considerando el mensaje del jugador. El id 2 representa al sistema. Si no hay id dos es el mensaje inicial y deberías responder solo con un contraataque a ese debate." +
+                "Mantén la respuesta en menos de 5 oraciones y en torno a la conversación. Debe contener solo tu respuesta al debate no debería de decir 'Tema de discusión'" +
+                " Configuración de IA: " + promptConfig;
         String reply = geminiService.getCompletion(replyPrompt);
 
         if (reply.length() > 1000) {
             reply = reply.substring(0, 1000);
         }
-
 
         Message replyMessage = new Message();
         replyMessage.setContentText(reply);
@@ -98,15 +114,15 @@ public class DebateController {
 
         messageRepository.save(replyMessage);
 
-        //termina por judgeDebate si ya es el ultimo turno
+        // Termina por judgeDebate si ya es el último turno
         if (game.getElapsedTurns() >= game.getMaxTurns()) {
             return judgeDebate(game, request);
         }
 
-        String moderarotorPrompt = game.getConversation().getMessages().toString() + " Eres un moderador de debate. En torno a la conversacion anterior reconoce las respuestas con un pequenho de gemini y del user1." +
+        String moderatorPrompt = game.getConversation().getMessages().toString() + " Eres un moderador de debate. En torno a la conversación anterior reconoce las respuestas con un pequeño de Gemini y del user1." +
                 " Genera una pregunta para que los participantes sigan debatiendo con respecto al mismo tema," +
-                " empezando con el texto 'Tema de discusion: y luego la pregunta o tema. contextText contiene los mensajes hablados. Responde solamente con 'Tema de discusion' yla pregunta.";
-        String moderatorReply = geminiService.getCompletion(moderarotorPrompt);
+                " empezando con el texto 'Tema de discusión: y luego la pregunta o tema. contextText contiene los mensajes hablados. Responde solamente con 'Tema de discusión' y la pregunta."+ promptConfig;
+        String moderatorReply = geminiService.getCompletion(moderatorPrompt);
 
         if (moderatorReply.length() > 1000) {
             moderatorReply = moderatorReply.substring(0, 1000);
@@ -118,15 +134,12 @@ public class DebateController {
         replyMessageModerator.setIsSent(true);
         replyMessageModerator.setUser(gemini);
 
-
         messageRepository.save(replyMessageModerator);
         patchElapsedTurns(game);
 
-
-
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
 
     public void patchElapsedTurns(Game game) {
         game.setElapsedTurns(game.getElapsedTurns() + 1);
