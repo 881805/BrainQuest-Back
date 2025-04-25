@@ -1,11 +1,12 @@
 package com.project.demo.rest.learning;
 
 import com.project.demo.dto.LearningScenarioRequest;
-import com.project.demo.gemini.GeminiService;
+
 import com.project.demo.logic.entity.learning.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.project.demo.service.GeminiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

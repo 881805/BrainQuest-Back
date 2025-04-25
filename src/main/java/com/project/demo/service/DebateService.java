@@ -1,5 +1,7 @@
 package com.project.demo.service;
 
+import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
+import com.project.demo.logic.entity.aiConfiguration.AiConfigurationRepository;
 import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.conversation.ConversationRepository;
 import com.project.demo.logic.entity.game.Game;
@@ -40,22 +42,29 @@ public class DebateService {
     @Autowired
     private ConversationRepository conversationRepository;
 
+    @Autowired
+    private AiConfigurationRepository aiConfigurationRepository;
 
     @Autowired
     private GameRepository gameRepository;
 
     public ResponseEntity<?> handleMessages(Game game) {
 
+        String promptConfig="";
+        List<AiConfiguration> aiConfigs = aiConfigurationRepository.findByUserId(game.getWinner().getId());
+        for(AiConfiguration config : aiConfigs){
+            promptConfig += ", ";
+            promptConfig += config.getConfiguracion();
+        }
         handleUserMessage(game);
 
-        handleReplyMessage(game);
+        handleReplyMessage(game,promptConfig);
 
-        //termina por judgeDebate si ya es el ultimo turno
         if (game.getElapsedTurns() >= game.getMaxTurns()) {
             return judgeDebate(game);
         }
 
-        handleModeratorMessage(game);
+        handleModeratorMessage(game,promptConfig);
         patchElapsedTurns(game);
 
 
@@ -73,10 +82,10 @@ public class DebateService {
         messageRepository.save(messageToAdd);
     }
 
-    public void handleReplyMessage(Game game) {
+    public void handleReplyMessage(Game game, String promptConfig) {
         String replyPrompt = game.getConversation().getMessages().toString() + " En torno a la conversacion anterior da una respuesta " +
                 "en torno al tema de debate considerando el mensaje del jugador. El id 2 representa al sistema. Si no hay id dos es el mensaje inicial y deberias responder solo con un contraatque a ese debate." +
-                "Manten la respuesta en menos de 5 oraciones y en torno a la conversacion. Debe contener solo tu respuesta al debate no deberia de decir 'Tema de discusion'";
+                "Manten la respuesta en menos de 5 oraciones y en torno a la conversacion. Debe contener solo tu respuesta al debate no deberia de decir 'Tema de discusion'"+ promptConfig;
         String reply = geminiService.getCompletion(replyPrompt);
 
         if (reply.length() > 1000) {
@@ -96,10 +105,11 @@ public class DebateService {
         messageRepository.save(replyMessage);
     }
 
-    public void handleModeratorMessage(Game game) {
+    public void handleModeratorMessage(Game game, String promptConfig) {
         String moderarotorPrompt = game.getConversation().getMessages().toString() + " Eres un moderador de debate. En torno a la conversacion anterior reconoce las respuestas con un pequenho de gemini y del user1." +
                 " Genera una pregunta para que los participantes sigan debatiendo con respecto al mismo tema," +
-                " empezando con el texto 'Tema de discusion: y luego la pregunta o tema. contextText contiene los mensajes hablados. Responde solamente con 'Tema de discusion' yla pregunta.";
+                " empezando con el texto 'Tema de discusion: y luego la pregunta o tema. contextText contiene los mensajes hablados." +
+                " Responde solamente con 'Tema de discusion' y la pregunta." + promptConfig;
         String moderatorReply = geminiService.getCompletion(moderarotorPrompt);
 
         if (moderatorReply.length() > 1000) {

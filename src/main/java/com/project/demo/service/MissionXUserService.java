@@ -60,12 +60,11 @@ public class MissionXUserService {
     public List<MissionXUser> randomizeMissions(User user, List<Mission> missions, List<MissionXUser> existingMissions, int amountToGenerate) {
         List<MissionXUser> newMissions = new ArrayList<>();
 
-        // Extract IDs of already assigned missions
+
         Set<Integer> assignedMissionIds = existingMissions.stream()
                 .map(mu -> mu.getMission().getId())
                 .collect(Collectors.toSet());
 
-        // Shuffle all available missions for randomness
         Collections.shuffle(missions);
 
         for (Mission mission : missions) {

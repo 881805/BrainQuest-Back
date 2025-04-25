@@ -1,6 +1,6 @@
 package com.project.demo.rest.interview;
 
-import com.project.demo.gemini.GeminiService;
+
 import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
 import com.project.demo.logic.entity.aiConfiguration.AiConfigurationRepository;
 import com.project.demo.logic.entity.conversation.ConversationRepository;
@@ -10,6 +10,7 @@ import com.project.demo.logic.entity.message.Message;
 import com.project.demo.logic.entity.message.MessageRepository;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
+import com.project.demo.service.GeminiService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONException;
 import org.json.JSONObject;

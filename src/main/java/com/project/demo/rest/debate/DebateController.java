@@ -1,7 +1,7 @@
 package com.project.demo.rest.debate;
 
 
-import com.project.demo.gemini.GeminiService;
+
 import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
 import com.project.demo.logic.entity.aiConfiguration.AiConfigurationRepository;
 import com.project.demo.logic.entity.config.Config;
@@ -33,8 +33,6 @@ public class DebateController {
     @Autowired
     private MessageRepository messageRepository;
 
-    @Autowired
-    private GeminiService geminiService;
 
 
     private AdminSeeder adminSeeder;
@@ -56,7 +54,6 @@ public class DebateController {
 
     public DebateController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
-        this.geminiService = geminiService;
     }
 
     @Transactional
