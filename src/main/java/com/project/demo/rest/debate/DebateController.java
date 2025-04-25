@@ -1,7 +1,10 @@
 package com.project.demo.rest.debate;
 
 
-import com.project.demo.service.GeminiService;
+import com.project.demo.gemini.GeminiService;
+import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
+import com.project.demo.logic.entity.aiConfiguration.AiConfigurationRepository;
+import com.project.demo.logic.entity.config.Config;
 import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.conversation.ConversationRepository;
 import com.project.demo.logic.entity.game.Game;
@@ -42,13 +45,14 @@ public class DebateController {
     @Autowired
     private ConversationRepository conversationRepository;
 
-
     @Autowired
     private GameRepository gameRepository;
 
 
     @Autowired
     private DebateService debateService;
+    @Autowired
+    private AiConfigurationRepository aiConfigurationRepository;
 
     public DebateController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
@@ -70,6 +74,5 @@ public class DebateController {
             response = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
        return response;
-
     }
 }

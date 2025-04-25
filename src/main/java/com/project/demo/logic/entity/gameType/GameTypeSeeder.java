@@ -28,7 +28,7 @@ public class GameTypeSeeder implements ApplicationListener<ContextRefreshedEvent
     }
 
     private void loadRoles() {
-        GameTypeEnum[] gameTypeNames = new GameTypeEnum[] { GameTypeEnum.TRIVIA, GameTypeEnum.DEBATE, GameTypeEnum.MULTIPLAYER_DEBATE,GameTypeEnum.INTERVIEW,GameTypeEnum.STORYBUILDER, GameTypeEnum.TYPING };
+        GameTypeEnum[] gameTypeNames = new GameTypeEnum[] { GameTypeEnum.TRIVIA, GameTypeEnum.DEBATE, GameTypeEnum.MULTIPLAYER_DEBATE,GameTypeEnum.INTERVIEW, GameTypeEnum.TYPING };
         Map<GameTypeEnum, String> roleDescriptionMap = Map.of(
                 GameTypeEnum.TRIVIA, "Triva game mode",
                 GameTypeEnum.DEBATE, "Debate game mode",
