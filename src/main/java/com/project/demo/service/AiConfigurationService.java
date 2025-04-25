@@ -2,7 +2,10 @@ package com.project.demo.service;
 
 import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
 import com.project.demo.logic.entity.aiConfiguration.AiConfigurationRepository;
+import com.project.demo.logic.entity.game.Game;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,4 +35,9 @@ public class AiConfigurationService {
     public void deleteById(Long id) {
         aiConfigurationRepository.deleteById(id);
     }
+
+    public Page<AiConfiguration> findAll(Pageable pageable) {
+        return aiConfigurationRepository.findAll(pageable);
+    }
+
 }

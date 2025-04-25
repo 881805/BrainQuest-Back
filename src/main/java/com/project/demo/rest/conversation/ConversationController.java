@@ -115,7 +115,7 @@ public class ConversationController {
                     .body("Conversation not found.");
         }
 
-        conversationRepository.delete(conversationOptional.get()); // ✅ Deletes messages too
+        conversationRepository.delete(conversationOptional.get());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Conversation and related messages deleted successfully.");

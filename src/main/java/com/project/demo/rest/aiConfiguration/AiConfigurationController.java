@@ -1,10 +1,17 @@
 package com.project.demo.rest.aiConfiguration;
 
 import com.project.demo.logic.entity.aiConfiguration.AiConfiguration;
+import com.project.demo.logic.entity.http.GlobalResponseHandler;
+import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.service.AiConfigurationService;
 import com.project.demo.logic.entity.user.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,14 +29,29 @@ public class AiConfigurationController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping
-    public List<AiConfiguration> getAll() {
-        return aiConfigurationService.findAll();
-    }
-
     @GetMapping("/user/{userId}")
     public List<AiConfiguration> getByUser(@PathVariable Long userId) {
         return aiConfigurationService.findByUserId(userId);
+    }
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getAll(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<AiConfiguration> aiConfigurationPage = aiConfigurationService.findAll(pageable);
+
+        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+        meta.setTotalPages(aiConfigurationPage.getTotalPages());
+        meta.setTotalElements(aiConfigurationPage.getTotalElements());
+        meta.setPageNumber(aiConfigurationPage.getNumber() + 1);
+        meta.setPageSize(aiConfigurationPage.getSize());
+
+        return new GlobalResponseHandler().handleResponse("AI Configurations retrieved successfully",
+                aiConfigurationPage.getContent(), HttpStatus.OK, meta);
     }
 
     @GetMapping("/list")
@@ -69,7 +91,6 @@ public class AiConfigurationController {
             return ResponseEntity.notFound().build();
         }
 
-        // Solo actualizamos el campo permitido
         existing.setConfiguracion(updatedConfig.getConfiguracion());
 
         return ResponseEntity.ok(aiConfigurationService.save(existing));
