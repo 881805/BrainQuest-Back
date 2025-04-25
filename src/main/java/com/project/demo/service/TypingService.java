@@ -21,32 +21,32 @@ public class TypingService {
     @Autowired
     private GeminiService geminiService;
 
-    public Typing generateTypingExercise(String category, String difficulty) {
-        try {
-            String prompt = "Eres un generador de ejercicios de mecanografía. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
-                    "{ \"text\": \"Texto de máximo 200 caracteres\", \"timeLimit\": 60, \"hints\": [\"Pista 1\", \"Pista 2\"] }\n" +
-                    "El ejercicio debe ser sobre " + category + " con dificultad " + difficulty +
-                    ". NO agregues explicaciones, texto adicional ni comentarios, SOLO el JSON.";
+    public Typing generateTypingExercise(Typing typingRequest) {
+        String prompt = buildPrompt(typingRequest.getCategory(), typingRequest.getDifficulty());
+        String reply = geminiService.getCompletion(prompt);
 
-            String reply = geminiService.getCompletion(prompt).trim()
-                    .replaceAll("```", "")
-                    .replaceAll("(?i)^json\\s*", "")
-                    .trim();
+        String cleaned = cleanGeminiResponse(reply);
+        Typing parsed = parseResponse(cleaned, typingRequest.getCategory(), typingRequest.getDifficulty());
 
-            if (!reply.startsWith("{")) {
-                throw new RuntimeException("Respuesta de Gemini no es JSON válido: " + reply);
-            }
-
-            Typing typingExercise = parseResponse(reply, category, difficulty);
-            return typingRepository.save(typingExercise);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error al generar el ejercicio de escritura: " + e.getMessage(), e);
-        }
+        return typingRepository.save(parsed);
     }
 
-    public List<Typing> getAllTypingExercises() {
+    public List<Typing> getAllExercises() {
         return typingRepository.findAll();
+    }
+
+    private String buildPrompt(String category, String difficulty) {
+        return "Eres un generador de ejercicios de mecanografía. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
+                "{ \"text\": \"Texto de máximo 200 caracteres\", \"timeLimit\": 60, \"hints\": [\"Pista 1\", \"Pista 2\"] }\n" +
+                "El ejercicio debe ser sobre " + category + " con dificultad " + difficulty +
+                ". NO agregues explicaciones, texto adicional ni comentarios, SOLO el JSON.";
+    }
+
+    private String cleanGeminiResponse(String response) {
+        return response.trim()
+                .replaceAll("```", "")
+                .replaceAll("(?i)^json\\s*", "")
+                .trim();
     }
 
     private Typing parseResponse(String response, String category, String difficulty) {
@@ -65,7 +65,6 @@ public class TypingService {
             List<String> hints = new ArrayList<>();
             jsonNode.get("hints").forEach(hint -> hints.add(hint.asText()));
             typingExercise.setHints(hints);
-
             typingExercise.setCategory(category);
             typingExercise.setDifficulty(difficulty);
 
@@ -74,8 +73,8 @@ public class TypingService {
             throw new RuntimeException("Error al parsear la respuesta de Gemini", e);
         }
     }
-    public Page<Typing> getAllTypingExercises(Pageable pageable) {
+
+    public Page<Typing> getPaginatedExercises(Pageable pageable) {
         return typingRepository.findAll(pageable);
     }
-
 }
