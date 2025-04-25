@@ -114,7 +114,7 @@ public class GameController {
         meta.setPageSize(gamePage.getSize());
 
 
-        return new GlobalResponseHandler().handleResponse("Games retrieved successfully",
+        return new GlobalResponseHandler().handleResponse("Juego empezado con éxito.",
                 gamePage.getContent(), HttpStatus.OK, meta);
     }
     @PutMapping
