@@ -1,18 +1,18 @@
 package com.project.demo.rest.typing;
 
-import com.project.demo.gemini.GeminiService;
+import com.project.demo.logic.entity.http.GlobalResponseHandler;
+import com.project.demo.logic.entity.http.Meta;
 import com.project.demo.logic.entity.typing.Typing;
-import com.project.demo.logic.entity.typing.TypingRepository;
+import com.project.demo.service.TypingService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,74 +20,43 @@ import java.util.List;
 public class TypingController {
 
     @Autowired
-    private TypingRepository typingRepository;
-
-    @Autowired
-    private GeminiService geminiService;
+    private TypingService typingService;
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/generate")
     public ResponseEntity<?> generateTypingExercise(@RequestBody Typing typingRequest) {
         try {
-
-            String prompt = "Eres un generador de ejercicios de mecanografía. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
-                    "{ \"text\": \"Texto de máximo 200 caracteres\", \"timeLimit\": 60, \"hints\": [\"Pista 1\", \"Pista 2\"] }\n" +
-                    "El ejercicio debe ser sobre " + typingRequest.getCategory() + " con dificultad " + typingRequest.getDifficulty() +
-                    ". NO agregues explicaciones, texto adicional ni comentarios, SOLO el JSON.";
-
-
-            String reply = geminiService.getCompletion(prompt);
-            System.out.println("Respuesta de Gemini: " + reply);
-
-            reply = reply.trim().replaceAll("```", "")
-                    .replaceAll("(?i)^json\\s*", "")
-                    .trim();
-
-            if (!reply.startsWith("{")) {
-                throw new RuntimeException("Respuesta de Gemini no es JSON válido: " + reply);
-            }
-
-            Typing typingExercise = parseResponse(reply, typingRequest.getCategory(), typingRequest.getDifficulty());
-
-            typingRepository.save(typingExercise);
-
-            return new ResponseEntity<>(typingExercise, HttpStatus.CREATED);
-
+            Typing exercise = typingService.generateTypingExercise(typingRequest);
+            return new ResponseEntity<>(exercise, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al generar el ejercicio de escritura: " + e.getMessage());
         }
     }
 
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/all")
-    public ResponseEntity<List<Typing>> getAllTypingExercises() {
-        return ResponseEntity.ok(typingRepository.findAll());
+    public ResponseEntity<?> getPaginatedTypingExercises(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Typing> typingPage = typingService.getPaginatedExercises(pageable);
+
+        Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
+        meta.setTotalPages(typingPage.getTotalPages());
+        meta.setTotalElements(typingPage.getTotalElements());
+        meta.setPageNumber(typingPage.getNumber() + 1);
+        meta.setPageSize(typingPage.getSize());
+
+        return new GlobalResponseHandler().handleResponse(
+                "Typing exercises retrieved successfully",
+                typingPage.getContent(),
+                HttpStatus.OK,
+                meta
+        );
     }
 
-    private Typing parseResponse(String response, String category, String difficulty) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(response);
-
-            if (!jsonNode.has("text") || !jsonNode.has("timeLimit") || !jsonNode.has("hints")) {
-                throw new RuntimeException("Formato incorrecto en la respuesta de Gemini: " + response);
-            }
-
-            Typing typingExercise = new Typing();
-            typingExercise.setText(jsonNode.get("text").asText());
-            typingExercise.setTimeLimit(jsonNode.get("timeLimit").asInt());
-
-            List<String> hints = new ArrayList<>();
-            jsonNode.get("hints").forEach(hint -> hints.add(hint.asText()));
-            typingExercise.setHints(hints);
-
-            typingExercise.setCategory(category);
-            typingExercise.setDifficulty(difficulty);
-
-            return typingExercise;
-        } catch (Exception e) {
-            System.out.println("Error al parsear la respuesta: " + response);
-            throw new RuntimeException("Error al parsear la respuesta de Gemini", e);
-        }
-    }
 }

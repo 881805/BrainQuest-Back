@@ -19,7 +19,7 @@ public class Message {
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "conversation_id", nullable = false)
-    private Conversation conversation; // conecta conversation con mensaje
+    private Conversation conversation;
 
     @Column(name = "content_text", length = 1000)
     private String contentText;

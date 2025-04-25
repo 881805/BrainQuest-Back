@@ -10,13 +10,13 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content;  // The content of the post (e.g., achievement text, etc.)
-    private String imageUrl; // Optional image URL for the post (if there is an image associated)
-    private String createdAt; // Timestamp or date the post was created
+    private String content;
+    private String imageUrl;
+    private String createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    private User user;  // The player who created the post
+    private User user;
 
     public Post() {
     }

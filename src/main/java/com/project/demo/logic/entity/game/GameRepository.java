@@ -21,4 +21,6 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("SELECT g FROM Game g JOIN g.conversation c WHERE c.user1 = :user AND g.isOngoing = true")
     Page<Game> findByConversationUser1AndIsOngoingTrue(@Param("user") User user, Pageable pageable);
 
+    Page<Game> findAll(Pageable pageable);
+
 }

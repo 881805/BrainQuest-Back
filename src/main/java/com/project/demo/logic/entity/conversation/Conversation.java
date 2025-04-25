@@ -63,7 +63,7 @@ public class Conversation {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Message> messages; // ✅ Ensure messages are deleted with conversation
+    private List<Message> messages;
 
     public Conversation() {}
 

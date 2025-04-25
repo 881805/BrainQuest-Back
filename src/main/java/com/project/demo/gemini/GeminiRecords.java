@@ -7,9 +7,6 @@ public class GeminiRecords {
     public record GeminiRequest(List<Content> contents) {}
     public record Content(List<Part> parts) {}
 
-    // "sealed" classes and interfaces:
-    // - only "permitted" classes can implement the interface
-    //   or extend the class
     public sealed interface Part
             permits TextPart, InlineDataPart {
     }
@@ -33,10 +30,10 @@ public class GeminiRecords {
     public record SafetyRating(String category, String probability) { }
     public record PromptFeedback(List<SafetyRating> safetyRatings) { }
 
-    // Returned from "count" endpoint
+
     public record GeminiCountResponse(int totalTokens) { }
 
-    // Models
+
     public record ModelList(List<Model> models) {}
 
     public record Model(

@@ -3,6 +3,8 @@ package com.project.demo.logic.entity.missionXUser;
 import com.project.demo.logic.entity.mission.Mission;
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
 
@@ -21,6 +23,7 @@ public class MissionXUser {
 
     @ManyToOne
     @JoinColumn(name = "mission_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Mission mission;
 
     private boolean isCompleted;

@@ -1,9 +1,6 @@
 package com.project.demo.rest.game;
 
 
-import com.project.demo.gemini.GeminiService;
-import com.project.demo.logic.entity.config.Config;
-import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.conversation.Conversation;
 import com.project.demo.logic.entity.conversation.ConversationRepository;
 import com.project.demo.logic.entity.game.Game;
@@ -12,13 +9,12 @@ import com.project.demo.logic.entity.gameType.GameType;
 import com.project.demo.logic.entity.gameType.GameTypeRepository;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
-import com.project.demo.logic.entity.message.Message;
-import com.project.demo.logic.entity.message.MessageRepository;
 import com.project.demo.logic.entity.rol.AdminSeeder;
 import com.project.demo.logic.entity.trivia.TriviaQuestion;
 import com.project.demo.logic.entity.trivia.TriviaRepository;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
+import com.project.demo.service.GameService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,8 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Optional;
 
 @RequestMapping("/games")
@@ -53,6 +47,8 @@ public class GameController {
 
     @Autowired
     private GameRepository gameRepository;
+    @Autowired
+    private GameService gameService;
 
 
     public GameController(GameRepository gameRepository) {
@@ -63,33 +59,11 @@ public class GameController {
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createGame(@RequestBody Game game, HttpServletRequest request) {
-        // Fetch User by winner ID
-        User winner = userRepository.findById(game.getWinner().getId()).orElse(null);
-
-        Conversation conversation = new Conversation();
-        conversation.setUser1(winner);
-        conversation.setUser2(winner);
-        conversation.setMultiplayer(false);
-        conversation.setCreateDate(LocalDateTime.now());
-
-        conversationRepository.save(conversation);
-
-        TriviaQuestion triviaQuestion = game.getQuestion() != null ?
-                triviaRepository.findById(game.getQuestion().getId())
-                        .orElseThrow(() -> new RuntimeException("Trivia Question not found")) : null;
-
-        // Fetch GameType by gameType ID
-        GameType gameType = game.getGameType() != null ?
-                gameTypeRepository.findById(game.getGameType().getId())
-                        .orElseThrow(() -> new RuntimeException("Game Type not found")) : null;
-
-        game.setWinner(winner);
-        game.setConversation(conversation);
-        game.setQuestion(triviaQuestion);
-        game.setGameType(gameType);
-
-
-        gameRepository.save(game);
+      try{
+          game = gameService.createGame(game);
+      } catch (Exception e) {
+          throw new RuntimeException(e);
+      }
 
         return new ResponseEntity<>(game, HttpStatus.CREATED);
     }
@@ -111,7 +85,7 @@ public class GameController {
         meta.setPageNumber(gamePage.getNumber() + 1);
         meta.setPageSize(gamePage.getSize());
 
-        gamePage.getContent().forEach(game -> {game.setTimeLeft(game.getTimeLeft());}); //agrega el timeleft para que el frontend trabaje con ello y pueda ensenharlo correctamente.
+        gamePage.getContent().forEach(game -> {game.setTimeLeft(game.getTimeLeft());});
         return new GlobalResponseHandler().handleResponse("Games retrieved successfully",
                 gamePage.getContent(), HttpStatus.OK, meta);
     }
@@ -127,10 +101,9 @@ public class GameController {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        // Create user object from userId
         User user = new User(userId);
 
-        // Find games by user and winner condition, with pagination
+
         Page<Game> gamePage = gameRepository.findByConversationUser1AndIsOngoingTrue(user, pageable);
 
         // Prepare metadata for response
@@ -140,8 +113,8 @@ public class GameController {
         meta.setPageNumber(gamePage.getNumber() + 1);
         meta.setPageSize(gamePage.getSize());
 
-        // Return response with games and metadata
-        return new GlobalResponseHandler().handleResponse("Games retrieved successfully",
+
+        return new GlobalResponseHandler().handleResponse("Juego empezado con éxito.",
                 gamePage.getContent(), HttpStatus.OK, meta);
     }
     @PutMapping
@@ -150,17 +123,15 @@ public class GameController {
 
         User winner = userRepository.findById(game.getWinner().getId()).orElse(null);
 
-        // Fetch Conversation by conversation ID (if exists)
         Conversation conversation = game.getConversation() != null ?
                 conversationRepository.findById(game.getConversation().getId())
                         .orElseThrow(() -> new RuntimeException("Conversation not found")) : null;
 
-        // Fetch TriviaQuestion by triviaQuestion ID (if exists)
         TriviaQuestion triviaQuestion = game.getQuestion() != null ?
                 triviaRepository.findById(game.getQuestion().getId())
                         .orElseThrow(() -> new RuntimeException("Trivia Question not found")) : null;
 
-        // Fetch GameType by gameType ID
+
         GameType gameType = game.getGameType() != null ?
                 gameTypeRepository.findById(game.getGameType().getId())
                         .orElseThrow(() -> new RuntimeException("Game Type not found")) : null;

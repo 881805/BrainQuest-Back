@@ -45,55 +45,6 @@ public class AuthRestController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/google-login")
-    public ResponseEntity<LoginResponse> loginWithGoogle(@RequestBody Map<String, String> payload) {
-        String googleToken = payload.get("token");
-
-        if (googleToken == null || googleToken.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        try {
-            GoogleIdToken.Payload tokenPayload = jwtService.verifyGoogleToken(googleToken);
-
-            if (tokenPayload == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-            }
-
-            String email = tokenPayload.getEmail();
-            Optional<User> userOptional = userRepository.findByEmail(email);
-            User user;
-
-            if (userOptional.isPresent()) {
-                user = userOptional.get();
-            } else {
-                // Register the user if not exists
-                user = new User();
-                user.setEmail(email);
-                user.setGoogleId(tokenPayload.getSubject());
-                user.setProvider("Google");
-
-                // Assign default role
-                Optional<Role> role = roleRepository.findByName(RoleEnum.USER);
-                role.ifPresent(user::setRole);
-
-                user = userRepository.save(user);
-            }
-
-            String jwtToken = jwtService.generateToken(user);
-
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setToken(jwtToken);
-            loginResponse.setExpiresIn(jwtService.getExpirationTime());
-            loginResponse.setAuthUser(user);
-
-            return ResponseEntity.ok(loginResponse);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody User user) {

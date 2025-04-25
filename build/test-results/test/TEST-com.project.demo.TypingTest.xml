@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.demo.TypingTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-04-25T19:06:20" hostname="SEBBIE" time="0.124">
+  <properties/>
+  <testcase name="testGenerateTypingExercise()" classname="com.project.demo.TypingTest" time="0.124"/>
+  <system-out><![CDATA[Respuesta de Gemini:     {
+      "text": "El gato duerme en el sofá mientras la lluvia cae.",
+      "timeLimit": 60,
+      "hints": ["Animal doméstico", "Clima"]
+    }
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

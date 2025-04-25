@@ -15,5 +15,6 @@ public interface MissionXUserRepository  extends JpaRepository<MissionXUser, Lon
 
     @Query("SELECT mxu FROM MissionXUser mxu WHERE mxu.user.id = :userId AND mxu.mission.isActive = true")
     Page<MissionXUser> findByUserIdAndActiveMission(Long userId, Pageable pageable);
-
+    @Query("SELECT mxu FROM MissionXUser mxu WHERE mxu.user.id = :userId AND mxu.isCompleted=false  AND mxu.mission.isActive = true")
+    Page<MissionXUser> findByUserIdAndActiveMissionAndIsCompletedIsFalse(Long userId, Pageable pageable);
 }
