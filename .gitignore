@@ -49,3 +49,4 @@ build/resources/
 .gradle/8.7/checksums/sha1-checksums.bin
 
 .gradle/file-system.probe
+.gradle/file-system.probe
