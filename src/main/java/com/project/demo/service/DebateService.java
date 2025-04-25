@@ -1,6 +1,5 @@
 package com.project.demo.service;
 
-import com.project.demo.gemini.GeminiService;
 import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.conversation.ConversationRepository;
 import com.project.demo.logic.entity.game.Game;

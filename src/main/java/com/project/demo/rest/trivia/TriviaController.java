@@ -2,7 +2,7 @@ package com.project.demo.rest.trivia;
 
 import com.project.demo.dto.FeedbackResponse;
 import com.project.demo.dto.UserAnswerRequest;
-import com.project.demo.gemini.GeminiService;
+import com.project.demo.service.GeminiService;
 import com.project.demo.logic.entity.trivia.Option;
 import com.project.demo.logic.entity.trivia.TriviaQuestion;
 import com.project.demo.logic.entity.trivia.TriviaRepository;

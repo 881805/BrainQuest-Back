@@ -1,11 +1,6 @@
 package com.project.demo.rest.history;
 
 
-import com.project.demo.gemini.GeminiService;
-import com.project.demo.logic.entity.config.Config;
-import com.project.demo.logic.entity.config.ConfigRepository;
-import com.project.demo.logic.entity.conversation.Conversation;
-import com.project.demo.logic.entity.conversation.ConversationRepository;
 import com.project.demo.logic.entity.game.Game;
 import com.project.demo.logic.entity.game.GameRepository;
 import com.project.demo.logic.entity.gameType.GameType;
@@ -15,11 +10,6 @@ import com.project.demo.logic.entity.history.History;
 import com.project.demo.logic.entity.history.HistoryRepository;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
-import com.project.demo.logic.entity.message.Message;
-import com.project.demo.logic.entity.message.MessageRepository;
-import com.project.demo.logic.entity.rol.AdminSeeder;
-import com.project.demo.logic.entity.trivia.TriviaQuestion;
-import com.project.demo.logic.entity.trivia.TriviaRepository;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,8 +23,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Optional;
 
 @RequestMapping("/history")

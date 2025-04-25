@@ -104,7 +104,6 @@ public class MissionXUserController {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        // Pass conversationId and pageable to the repository method
         Page<MissionXUser> missionPage = missionXUserRepository.findByUserIdAndActiveMissionAndIsCompletedIsFalse(userId, pageable);
 
 
@@ -121,35 +120,14 @@ public class MissionXUserController {
     @PutMapping("/{missionId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<?> updateMessage(@PathVariable Long missionId, @RequestBody MissionXUser mission, HttpServletRequest request) {
-        Optional<MissionXUser> foundMission = missionXUserRepository.findById(missionId);
-
-        if (!foundMission.isPresent()) {
-            return new GlobalResponseHandler().handleResponse("Mission ID " + missionId + " not found",
-                    HttpStatus.NOT_FOUND, request);
+        ResponseEntity<?> handler;
+        try{
+            handler = missionXUserService.updateMission(mission, missionId,request);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
-        MissionXUser updatedMission = foundMission.get();
-        updatedMission.setIsCompleted(mission.getIsCompleted());
-        updatedMission.setCompletedAt(mission.getCompletedAt());
-        updatedMission.setLastUpdated(new Date());
-        updatedMission.setProgress(mission.getProgress());
-
-        //guarda la experiencia del usuario en caso de una mision ser completada
-        if(mission.getProgress()>=foundMission.get().getMission().getObjective().getAmmountSuccesses() && foundMission.get().getMission().getIsActive()==true) {
-            User foundUser = userRepository.getById(updatedMission.getUser().getId());
-
-            foundUser.setExperience(foundUser.getExperience()+foundMission.get().getMission().getExperience());
-            userRepository.save(foundUser);
-            updatedMission.setIsCompleted(true);
-            missionXUserRepository.save(updatedMission);
-            return new GlobalResponseHandler().handleResponse("Mision completada con exito: " + updatedMission.getMission().getObjective().getObjectiveText(),
-                    updatedMission, HttpStatus.OK, request);
-        }
-        missionXUserRepository.save(updatedMission);
-
-
-        return new GlobalResponseHandler().handleResponse("Progreso de mision actualizado con exito",
-                updatedMission, HttpStatus.OK, request);
+        return handler;
     }
 
     @DeleteMapping("/{missionId}")

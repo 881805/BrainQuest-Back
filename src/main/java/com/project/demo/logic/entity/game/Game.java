@@ -33,8 +33,7 @@ public class Game {
     @JoinColumn(name = "game_type", referencedColumnName = "id")
     private GameType gameType;
 
-    private boolean isOngoing; //determina si el juego esta activo o no, un jugazdor no puede estar en varios juegos activos al mismo tiempo del mismo tipo
-
+    private boolean isOngoing;
     private int pointsEarnedPlayer1;
 
     @Column(nullable = true)

@@ -89,7 +89,6 @@ public class MissionController {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        // Pass conversationId and pageable to the repository method
         Page<Mission> missionPage = missionRepository.findById(missionId, pageable);
 
         Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());

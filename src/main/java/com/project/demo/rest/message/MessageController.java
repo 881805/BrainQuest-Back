@@ -1,8 +1,7 @@
 package com.project.demo.rest.message;
 
 
-import com.project.demo.gemini.GeminiService;
-import com.project.demo.logic.entity.config.Config;
+import com.project.demo.service.GeminiService;
 import com.project.demo.logic.entity.config.ConfigRepository;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
@@ -124,7 +123,7 @@ public class MessageController {
 
         Message existingMessage = foundMessage.get();
 
-        // Update fields only if they are provided in the request
+
         if (message.getContentText() != null) {
             existingMessage.setContentText(message.getContentText());
         }
@@ -135,10 +134,8 @@ public class MessageController {
         if (message.getUser() != null) {
             existingMessage.setUser(foundUser.get());
         }
-        // Handle Category Update
 
 
-        // Save updated Producto
         Message updatedMessage = messageRepository.save(existingMessage);
         return new GlobalResponseHandler().handleResponse("Message updated successfully",
                 updatedMessage, HttpStatus.OK, request);

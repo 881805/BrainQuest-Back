@@ -53,12 +53,9 @@ public class User implements UserDetails {
     private Role role;
 
 
-    // Constructors
-
     private Long experience;
 
 
-    // Constructors
     public User() {}
 
     public Long getExperience() {

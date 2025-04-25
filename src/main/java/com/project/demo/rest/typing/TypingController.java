@@ -1,6 +1,6 @@
 package com.project.demo.rest.typing;
 
-import com.project.demo.gemini.GeminiService;
+import com.project.demo.service.GeminiService;
 import com.project.demo.logic.entity.typing.Typing;
 import com.project.demo.logic.entity.typing.TypingRepository;
 import org.springframework.beans.factory.annotation.Autowired;

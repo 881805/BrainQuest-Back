@@ -1,12 +1,11 @@
 package com.project.demo.rest.conversation;
 
 
-import com.project.demo.gemini.GeminiService;
+import com.project.demo.service.GeminiService;
 import com.project.demo.logic.entity.conversation.Conversation;
 import com.project.demo.logic.entity.conversation.ConversationRepository;
 import com.project.demo.logic.entity.http.GlobalResponseHandler;
 import com.project.demo.logic.entity.http.Meta;
-import com.project.demo.logic.entity.message.Message;
 import com.project.demo.logic.entity.rol.AdminSeeder;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
@@ -48,13 +47,13 @@ public class ConversationController {
     public ResponseEntity<?> createConversation(@RequestBody Conversation conversation, HttpServletRequest request) {
 
         User user1 = userRepository.findById(conversation.getUser1().getId()).orElseThrow(() -> new RuntimeException("User not found"));
-        User user2 = userRepository.findById(conversation.getUser2().getId()).orElse(null); // user2 could be null
+        User user2 = userRepository.findById(conversation.getUser2().getId()).orElse(null);
 
 
         conversation.setUser1(user1);
         conversation.setUser2(user2);
 
-        conversationRepository.save(conversation); //guarda conversacion
+        conversationRepository.save(conversation);
 
         return new ResponseEntity<>(conversation, HttpStatus.CREATED);
     }
@@ -69,7 +68,6 @@ public class ConversationController {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        // Pass conversationId and pageable to the repository method
         Page<Conversation> messagePage = conversationRepository.findByUserId(userId,pageable);
 
         Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
@@ -94,7 +92,7 @@ public class ConversationController {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        // Pass conversationId and pageable to the repository method
+
         Page<Conversation> messagePage = conversationRepository.findAll(pageable);
 
         Meta meta = new Meta(request.getMethod(), request.getRequestURL().toString());
@@ -105,12 +103,6 @@ public class ConversationController {
 
         return new GlobalResponseHandler().handleResponse("Messages retrieved successfully",
                 messagePage.getContent(), HttpStatus.OK, meta);
-    }
-
-    @PutMapping("/{conversationId}")
-    public ResponseEntity<String> updateConversation(@PathVariable Long conversationId) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body("PUT method is not allowed for this resource.");
     }
 
     @DeleteMapping("/{conversationId}")

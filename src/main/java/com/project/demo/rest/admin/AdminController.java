@@ -6,6 +6,8 @@ import com.project.demo.logic.entity.rol.RoleRepository;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,11 +32,11 @@ public class AdminController {
 
     @PostMapping
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public User createAdministrator(@RequestBody User newAdminUser) {
+    public ResponseEntity<?> createAdministrator(@RequestBody User newAdminUser) {
         Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.ADMIN);
 
         if (optionalRole.isEmpty()) {
-            return null;
+            return new ResponseEntity<>("No role found", HttpStatus.NOT_FOUND);
         }
 
         var user = new User();
@@ -43,6 +45,6 @@ public class AdminController {
         user.setPassword(passwordEncoder.encode(newAdminUser.getPassword()));
         user.setRole(optionalRole.get());
 
-        return userRepository.save(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 }
