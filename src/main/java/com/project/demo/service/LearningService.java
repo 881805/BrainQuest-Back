@@ -135,7 +135,7 @@ public class LearningService {
         );
     }
 
-    private LearningScenario parseScenarioResponse(String response, String topic, Integer step) {
+    public LearningScenario parseScenarioResponse(String response, String topic, Integer step) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(response);

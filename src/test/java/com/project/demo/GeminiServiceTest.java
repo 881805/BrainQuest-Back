@@ -46,7 +46,7 @@ public class GeminiServiceTest {
 
 
         String actual = geminiService.getCompletion(inputText);
-        
+
         assertEquals(expectedText, actual);
     }
 }

@@ -83,7 +83,7 @@ public class InterviewService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private void incrementTurn(Game game) {
+    public void incrementTurn(Game game) {
         game.setElapsedTurns(game.getElapsedTurns() + 1);
         gameRepository.save(game);
     }

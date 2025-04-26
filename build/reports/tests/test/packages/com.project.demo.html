@@ -22,13 +22,13 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">5</div>
+<div class="counter">14</div>
 <p>tests</p>
 </div>
 </td>
 <td>
 <div class="infoBox" id="failures">
-<div class="counter">0</div>
+<div class="counter">8</div>
 <p>failures</p>
 </div>
 </td>
@@ -40,7 +40,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">1.282s</div>
+<div class="counter">1.646s</div>
 <p>duration</p>
 </div>
 </td>
@@ -49,8 +49,8 @@
 </div>
 </td>
 <td>
-<div class="infoBox success" id="successRate">
-<div class="percent">100%</div>
+<div class="infoBox failures" id="successRate">
+<div class="percent">42%</div>
 <p>successful</p>
 </div>
 </td>
@@ -60,10 +60,50 @@
 <div id="tabs">
 <ul class="tabLinks">
 <li>
-<a href="#tab0">Classes</a>
+<a href="#tab0">Failed tests</a>
+</li>
+<li>
+<a href="#tab1">Classes</a>
 </li>
 </ul>
 <div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<ul class="linkList">
+<li>
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html">GeminiResponseTrimTest</a>.
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html#testCleanGeminiResponse_withExtraWhitespace()">testCleanGeminiResponse_withExtraWhitespace()</a>
+</li>
+<li>
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html">GeminiResponseTrimTest</a>.
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html#testCleanGeminiResponse_withJsonBlock()">testCleanGeminiResponse_withJsonBlock()</a>
+</li>
+<li>
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html">GeminiResponseTrimTest</a>.
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html#testCleanGeminiResponse_withUpperCaseJsonLabel()">testCleanGeminiResponse_withUpperCaseJsonLabel()</a>
+</li>
+<li>
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html">GeminiResponseTrimTest</a>.
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html#testCleanGeminiResponse_withoutJsonLabel()">testCleanGeminiResponse_withoutJsonLabel()</a>
+</li>
+<li>
+<a href="../classes/com.project.demo.LearningServiceTest.html">LearningServiceTest</a>.
+<a href="../classes/com.project.demo.LearningServiceTest.html#testParseScenarioResponse()">testParseScenarioResponse()</a>
+</li>
+<li>
+<a href="../classes/com.project.demo.MissionXUserServiceTest.html">MissionXUserServiceTest</a>.
+<a href="../classes/com.project.demo.MissionXUserServiceTest.html#testRandomizeMissions_returnsCorrectAmountWithoutRepeats()">testRandomizeMissions_returnsCorrectAmountWithoutRepeats()</a>
+</li>
+<li>
+<a href="../classes/com.project.demo.TriviaServiceTest.html">TriviaServiceTest</a>.
+<a href="../classes/com.project.demo.TriviaServiceTest.html#testGenerateTriviaQuestion_Successful()">testGenerateTriviaQuestion_Successful()</a>
+</li>
+<li>
+<a href="../classes/com.project.demo.TypingTest.html">TypingTest</a>.
+<a href="../classes/com.project.demo.TypingTest.html#testGenerateTypingExercise()">testGenerateTypingExercise()</a>
+</li>
+</ul>
+</div>
+<div id="tab1" class="tab">
 <h2>Classes</h2>
 <table>
 <thead>
@@ -77,13 +117,23 @@
 </tr>
 </thead>
 <tr>
+<td class="failures">
+<a href="../classes/com.project.demo.GeminiResponseTrimTest.html">GeminiResponseTrimTest</a>
+</td>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+<td>0.021s</td>
+<td class="failures">0%</td>
+</tr>
+<tr>
 <td class="success">
-<a href="../classes/com.project.demo.BrainQuestTests.html">BrainQuestTests</a>
+<a href="../classes/com.project.demo.GeminiServiceTest.html">GeminiServiceTest</a>
 </td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
-<td>0.011s</td>
+<td>0.925s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
@@ -93,8 +143,38 @@
 <td>1</td>
 <td>0</td>
 <td>0</td>
-<td>0.148s</td>
+<td>0.302s</td>
 <td class="success">100%</td>
+</tr>
+<tr>
+<td class="success">
+<a href="../classes/com.project.demo.InterviewServiceTest.html">InterviewServiceTest</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.007s</td>
+<td class="success">100%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/com.project.demo.LearningServiceTest.html">LearningServiceTest</a>
+</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0.002s</td>
+<td class="failures">0%</td>
+</tr>
+<tr>
+<td class="failures">
+<a href="../classes/com.project.demo.MissionXUserServiceTest.html">MissionXUserServiceTest</a>
+</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0.044s</td>
+<td class="failures">0%</td>
 </tr>
 <tr>
 <td class="success">
@@ -103,18 +183,28 @@
 <td>2</td>
 <td>0</td>
 <td>0</td>
-<td>0.999s</td>
+<td>0.013s</td>
 <td class="success">100%</td>
 </tr>
 <tr>
-<td class="success">
+<td class="failures">
+<a href="../classes/com.project.demo.TriviaServiceTest.html">TriviaServiceTest</a>
+</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0.277s</td>
+<td class="failures">50%</td>
+</tr>
+<tr>
+<td class="failures">
 <a href="../classes/com.project.demo.TypingTest.html">TypingTest</a>
 </td>
 <td>1</td>
+<td>1</td>
 <td>0</td>
-<td>0</td>
-<td>0.124s</td>
-<td class="success">100%</td>
+<td>0.055s</td>
+<td class="failures">0%</td>
 </tr>
 </table>
 </div>
@@ -126,7 +216,7 @@
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 8.7</a> at Apr 25, 2025, 1:06:21 PM</p>
+<a href="http://www.gradle.org">Gradle 8.7</a> at Apr 25, 2025, 5:28:17 PM</p>
 </div>
 </div>
 </body>

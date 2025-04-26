@@ -68,7 +68,7 @@ public class DebateService {
         patchElapsedTurns(game);
 
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>("Juego actualizado correcctamente",HttpStatus.CREATED);
     }
 
     public void handleUserMessage(Game game) {

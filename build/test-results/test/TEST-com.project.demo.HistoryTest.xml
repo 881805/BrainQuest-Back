@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.project.demo.HistoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-04-25T19:06:20" hostname="SEBBIE" time="0.148">
+<testsuite name="com.project.demo.HistoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-04-25T23:28:16" hostname="SEBBIE" time="0.302">
   <properties/>
-  <testcase name="testCreateHistory()" classname="com.project.demo.HistoryTest" time="0.148"/>
+  <testcase name="testCreateHistory()" classname="com.project.demo.HistoryTest" time="0.302"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

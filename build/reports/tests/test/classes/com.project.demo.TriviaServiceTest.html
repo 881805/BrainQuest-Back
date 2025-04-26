@@ -3,17 +3,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=edge"/>
-<title>Test results - TypingTest</title>
+<title>Test results - TriviaServiceTest</title>
 <link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
 <link href="../css/style.css" rel="stylesheet" type="text/css"/>
 <script src="../js/report.js" type="text/javascript"></script>
 </head>
 <body>
 <div id="content">
-<h1>TypingTest</h1>
+<h1>TriviaServiceTest</h1>
 <div class="breadcrumbs">
 <a href="../index.html">all</a> &gt; 
-<a href="../packages/com.project.demo.html">com.project.demo</a> &gt; TypingTest</div>
+<a href="../packages/com.project.demo.html">com.project.demo</a> &gt; TriviaServiceTest</div>
 <div id="summary">
 <table>
 <tr>
@@ -23,7 +23,7 @@
 <tr>
 <td>
 <div class="infoBox" id="tests">
-<div class="counter">1</div>
+<div class="counter">2</div>
 <p>tests</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">0.055s</div>
+<div class="counter">0.277s</div>
 <p>duration</p>
 </div>
 </td>
@@ -51,7 +51,7 @@
 </td>
 <td>
 <div class="infoBox failures" id="successRate">
-<div class="percent">0%</div>
+<div class="percent">50%</div>
 <p>successful</p>
 </div>
 </td>
@@ -70,17 +70,32 @@
 <div id="tab0" class="tab">
 <h2>Failed tests</h2>
 <div class="test">
-<a name="testGenerateTypingExercise()"></a>
-<h3 class="failures">testGenerateTypingExercise()</h3>
+<a name="testGenerateTriviaQuestion_Successful()"></a>
+<h3 class="failures">testGenerateTriviaQuestion_Successful()</h3>
 <span class="code">
-<pre>org.opentest4j.AssertionFailedError: expected: &lt;201&gt; but was: &lt;500&gt;
-	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
-	at app//org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
-	at app//org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
-	at app//com.project.demo.TypingTest.testGenerateTypingExercise(TypingTest.java:69)
+<pre>Argument(s) are different! Wanted:
+triviaRepository.save(
+    TriviaQuestion(id=null, question=¿Cuál es el planeta más cercano al Sol?, correctAnswer=Mercurio, options=[com.project.demo.logic.entity.trivia.Option@12c0c0b3, com.project.demo.logic.entity.trivia.Option@b61edb9, com.project.demo.logic.entity.trivia.Option@5d3ff859, com.project.demo.logic.entity.trivia.Option@32bb0072], difficulty=Fácil, category=Ciencia, game=null, userAnswer=null, feedback=null)
+);
+-&gt; at com.project.demo.TriviaServiceTest.testGenerateTriviaQuestion_Successful(TriviaServiceTest.java:74)
+Actual invocations have different arguments:
+triviaRepository.findByCategoryAndDifficulty(
+    &quot;Ciencia&quot;,
+    &quot;Fácil&quot;
+);
+-&gt; at com.project.demo.service.TriviaService.generateTriviaQuestion(TriviaService.java:27)
+triviaRepository.findByQuestionAndCategoryAndDifficulty(
+    &quot;¿Cuál es el planeta más cercano al Sol?&quot;,
+    &quot;Ciencia&quot;,
+    &quot;Fácil&quot;
+);
+-&gt; at com.project.demo.service.TriviaService.generateTriviaQuestion(TriviaService.java:50)
+triviaRepository.save(
+    TriviaQuestion(id=null, question=¿Cuál es el planeta más cercano al Sol?, correctAnswer=Mercurio, options=[com.project.demo.logic.entity.trivia.Option@60aec68a, com.project.demo.logic.entity.trivia.Option@25a7fedf, com.project.demo.logic.entity.trivia.Option@6361b799, com.project.demo.logic.entity.trivia.Option@1b9d9a2b], difficulty=Fácil, category=Ciencia, game=null, userAnswer=null, feedback=null)
+);
+-&gt; at com.project.demo.service.TriviaService.generateTriviaQuestion(TriviaService.java:57)
+
+	at app//com.project.demo.TriviaServiceTest.testGenerateTriviaQuestion_Successful(TriviaServiceTest.java:74)
 	at java.base@21.0.6/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base@21.0.6/java.lang.reflect.Method.invoke(Method.java:580)
 	at app//org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:728)
@@ -176,8 +191,13 @@
 </tr>
 </thead>
 <tr>
-<td class="failures">testGenerateTypingExercise()</td>
-<td class="failures">0.055s</td>
+<td class="success">testGenerateTriviaQuestion_DuplicateQuestion_ThrowsException()</td>
+<td class="success">0.008s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="failures">testGenerateTriviaQuestion_Successful()</td>
+<td class="failures">0.269s</td>
 <td class="failures">failed</td>
 </tr>
 </table>
