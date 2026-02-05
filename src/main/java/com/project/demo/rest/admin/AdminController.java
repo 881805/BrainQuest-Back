@@ -32,7 +32,7 @@ public class AdminController {
 
     @PostMapping
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> createAdministrator(@RequestBody User newAdminUser) {
+    public ResponseEntity<Object> createAdministrator(@RequestBody User newAdminUser) {
         Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.ADMIN);
 
         if (optionalRole.isEmpty()) {

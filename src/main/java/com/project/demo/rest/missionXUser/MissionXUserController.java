@@ -57,7 +57,7 @@ public class MissionXUserController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createMission(@RequestBody MissionXUser missionXUser, HttpServletRequest request) {
+    public ResponseEntity<Object> createMission(@RequestBody MissionXUser missionXUser, HttpServletRequest request) {
         Optional<User> optionalUser = userRepository.findById(missionXUser.getUser().getId());
         Optional<Mission> optionalMission = missionRepository.findById(Long.valueOf(missionXUser.getMission().getId()));
         missionXUser.setUser(optionalUser.get());
@@ -71,7 +71,7 @@ public class MissionXUserController {
 
     @PostMapping("/assign/{userId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createMission(@PathVariable Long userId, HttpServletRequest request) {
+    public ResponseEntity<Object> createMission(@PathVariable Long userId, HttpServletRequest request) {
         int page = 1;
         int size = 10;
 
@@ -97,7 +97,7 @@ public class MissionXUserController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAllByUserId(@PathVariable Long userId,
+    public ResponseEntity<Object> getAllByUserId(@PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
@@ -119,8 +119,8 @@ public class MissionXUserController {
 
     @PutMapping("/{missionId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> updateMessage(@PathVariable Long missionId, @RequestBody MissionXUser mission, HttpServletRequest request) {
-        ResponseEntity<?> handler;
+    public ResponseEntity<Object> updateMessage(@PathVariable Long missionId, @RequestBody MissionXUser mission, HttpServletRequest request) {
+        ResponseEntity<Object> handler;
         try{
             handler = missionXUserService.updateMission(mission, missionId,request);
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class MissionXUserController {
 
     @DeleteMapping("/{missionId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> deleteMessage(@PathVariable Long missionId, HttpServletRequest request) {
+    public ResponseEntity<Object> deleteMessage(@PathVariable Long missionId, HttpServletRequest request) {
         Optional<MissionXUser> foundMission = missionXUserRepository.findById(missionId);
         if(foundMission.isPresent()) {
             missionXUserRepository.delete(foundMission.get());

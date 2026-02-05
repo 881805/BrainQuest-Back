@@ -43,7 +43,7 @@ public class InterviewService {
     @Autowired
     private AiConfigurationRepository aiConfigurationRepository;
 
-    public ResponseEntity<?> simulateInterview(Game game, HttpServletRequest request) {
+    public ResponseEntity<Object> simulateInterview(Game game, HttpServletRequest request) {
         User user = game.getWinner();
 
         StringBuilder promptConfig = new StringBuilder();
@@ -88,7 +88,7 @@ public class InterviewService {
         gameRepository.save(game);
     }
 
-    public ResponseEntity<?> generateInterviewFeedback(Game game, HttpServletRequest request) {
+    public ResponseEntity<Object> generateInterviewFeedback(Game game, HttpServletRequest request) {
         List<Message> messages = game.getConversation().getMessages();
         String conversationString = messages.toString();
 

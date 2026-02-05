@@ -10,7 +10,7 @@ import com.project.demo.gemini.GeminiRecords.*;
 
 @Service
 public class GeminiService {
-    public static final String GEMINI_FLASH = "gemini-2.0-flash";
+    public static final String GEMINI_FLASH = "gemini-2.5-flash";
 
     private final GeminiInterface geminiInterface;
 

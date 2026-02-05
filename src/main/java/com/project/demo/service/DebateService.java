@@ -24,6 +24,8 @@ import java.util.Optional;
 
 @Service
 public class DebateService {
+
+    private final static String EMAIL_CONST = "gemini.google@gmail.com";
     @Autowired
     private UserRepository userRepository;
 
@@ -48,7 +50,7 @@ public class DebateService {
     @Autowired
     private GameRepository gameRepository;
 
-    public ResponseEntity<?> handleMessages(Game game) {
+    public ResponseEntity<Object> handleMessages(Game game) {
 
         String promptConfig="";
         List<AiConfiguration> aiConfigs = aiConfigurationRepository.findByUserId(game.getWinner().getId());
@@ -97,7 +99,7 @@ public class DebateService {
         replyMessage.setContentText(reply);
         replyMessage.setConversation(game.getConversation());
         replyMessage.setIsSent(true);
-        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
+        Optional<User> optionalUser = userRepository.findByEmail(EMAIL_CONST);
         Long geminiUserId = optionalUser.get().getId();
         User gemini = userRepository.findById(geminiUserId).get();
         replyMessage.setUser(gemini);
@@ -120,7 +122,7 @@ public class DebateService {
         replyMessageModerator.setContentText(moderatorReply);
         replyMessageModerator.setConversation(game.getConversation());
         replyMessageModerator.setIsSent(true);
-        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
+        Optional<User> optionalUser = userRepository.findByEmail(EMAIL_CONST);
         Long geminiUserId = optionalUser.get().getId();
         User gemini = userRepository.findById(geminiUserId).get();
         replyMessageModerator.setUser(gemini);
@@ -128,7 +130,7 @@ public class DebateService {
         messageRepository.save(replyMessageModerator);
     }
 
-    public ResponseEntity<?> judgeDebate(@RequestBody Game game) throws JSONException {
+    public ResponseEntity<Object> judgeDebate(@RequestBody Game game) throws JSONException {
 
         List<Message> messages = game.getConversation().getMessages();
 
@@ -159,7 +161,7 @@ public class DebateService {
         replyMessageModerator.setContentText(feedback);
         replyMessageModerator.setConversation(game.getConversation());
         replyMessageModerator.setIsSent(true);
-        Optional<User> optionalUser = userRepository.findByEmail("gemini.google@gmail.com");
+        Optional<User> optionalUser = userRepository.findByEmail(EMAIL_CONST);
         Long geminiUserId = optionalUser.get().getId();
         User gemini = userRepository.findById(geminiUserId).get();
         replyMessageModerator.setUser(gemini);

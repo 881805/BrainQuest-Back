@@ -35,7 +35,7 @@ public class TriviaController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/generate")
-    public ResponseEntity<?> generateTriviaQuestion(@RequestBody TriviaQuestion triviaRequest) {
+    public ResponseEntity<Object> generateTriviaQuestion(@RequestBody TriviaQuestion triviaRequest) {
         try {
             TriviaQuestion question = triviaService.generateTriviaQuestion(triviaRequest);
             return new ResponseEntity<>(question, HttpStatus.CREATED);
@@ -56,7 +56,7 @@ public class TriviaController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ResponseEntity<?> getAllTriviaQuestions(
+    public ResponseEntity<Object> getAllTriviaQuestions(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {

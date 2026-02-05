@@ -31,7 +31,7 @@ public class UserRestController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
@@ -50,7 +50,7 @@ public class UserRestController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> addUser(@RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<Object> addUser(@RequestBody User user, HttpServletRequest request) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return new GlobalResponseHandler().handleResponse("User updated successfully",
@@ -65,7 +65,7 @@ public class UserRestController {
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<Object> updateUser(@PathVariable Long userId, @RequestBody User user, HttpServletRequest request) {
         Optional<User> foundOrder = userRepository.findById(userId);
         if(foundOrder.isPresent()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -81,7 +81,7 @@ public class UserRestController {
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long userId, HttpServletRequest request) {
+    public ResponseEntity<Object> deleteUser(@PathVariable Long userId, HttpServletRequest request) {
         Optional<User> foundOrder = userRepository.findById(userId);
         if(foundOrder.isPresent()) {
             userRepository.deleteById(userId);

@@ -24,7 +24,7 @@ public class TypingController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/generate")
-    public ResponseEntity<?> generateTypingExercise(@RequestBody Typing typingRequest) {
+    public ResponseEntity<Object> generateTypingExercise(@RequestBody Typing typingRequest) {
         try {
             Typing exercise = typingService.generateTypingExercise(typingRequest);
             return new ResponseEntity<>(exercise, HttpStatus.CREATED);
@@ -37,7 +37,7 @@ public class TypingController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/all")
-    public ResponseEntity<?> getPaginatedTypingExercises(
+    public ResponseEntity<Object> getPaginatedTypingExercises(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {

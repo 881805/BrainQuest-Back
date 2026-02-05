@@ -35,7 +35,7 @@ public class LearningController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/generate")
-    public ResponseEntity<?> generateScenario(@RequestBody LearningScenarioRequest request) {
+    public ResponseEntity<Object> generateScenario(@RequestBody LearningScenarioRequest request) {
         try {
             LearningScenario scenario = learningService.generateScenario(request);
             return new ResponseEntity<>(scenario, HttpStatus.CREATED);
@@ -47,7 +47,7 @@ public class LearningController {
 
     @GetMapping("/topic/{topic}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getScenariosByTopic(
+    public ResponseEntity<Object> getScenariosByTopic(
             @PathVariable String topic,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -68,7 +68,7 @@ public class LearningController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/feedback/{id}")
-    public ResponseEntity<?> getFeedback(@PathVariable Long id, @RequestParam String userAnswer) {
+    public ResponseEntity<Object> getFeedback(@PathVariable Long id, @RequestParam String userAnswer) {
         try {
             Map<String, Object> feedbackResult = learningService.processFeedback(id, userAnswer);
             return ResponseEntity.ok(feedbackResult);
