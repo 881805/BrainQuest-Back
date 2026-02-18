@@ -6,16 +6,24 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+
 
 import java.util.Optional;
 
 @Component
 public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
     private final RoleRepository roleRepository;
+
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${app.default.superadmin.password}")
+    private String superAdminPassword;
+
+    @Value("${app.default.ai.password}")
+    private String aiPassword;
 
     public AdminSeeder(
             RoleRepository roleRepository,
@@ -33,13 +41,12 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
         this.createAIUser();
     }
 
-
     private void createSuperAdministrator() {
         User superAdmin = new User();
         superAdmin.setName("Super");
         superAdmin.setLastname("Admin");
         superAdmin.setEmail("super.admin@gmail.com");
-        superAdmin.setPassword("superadmin123");
+        superAdmin.setPassword(superAdminPassword);
         superAdmin.setExperience(0L);
 
         Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.SUPER_ADMIN);
@@ -64,7 +71,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
         aiUser.setName("Gemini");
         aiUser.setLastname("Google");
         aiUser.setEmail("gemini.google@gmail.com");
-        aiUser.setPassword(passwordEncoder.encode("123456976345425843252sdfgsr@D!"));
+        aiUser.setPassword(passwordEncoder.encode(aiPassword));
         aiUser.setExperience(0L);
         Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
         Optional<User> optionalUser = userRepository.findByEmail(aiUser.getEmail());
