@@ -1,5 +1,7 @@
 package com.project.demo.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.demo.dto.FeedbackResponse;
 import com.project.demo.dto.UserAnswerRequest;
 import com.project.demo.logic.entity.trivia.Option;
@@ -8,11 +10,9 @@ import com.project.demo.logic.entity.trivia.TriviaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TriviaService {
@@ -32,14 +32,19 @@ public class TriviaService {
             preguntasPreviasTexto.append("- ").append(q.getQuestion()).append("\n");
         }
 
-        String prompt = "Eres un generador de preguntas de trivia. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
-                "{ \"question\": \"Texto de la pregunta\", \"options\": [\"Opción 1\", \"Opción 2\", \"Opción 3\", \"Opción 4\"], \"correctAnswer\": \"Opción correcta\" }\n" +
-                "La pregunta debe ser sobre " + triviaRequest.getCategory() + " con dificultad " + triviaRequest.getDifficulty() + ".\n" +
-                "Estas son las preguntas que ya se han hecho. NO repitas ninguna de ellas:\n" + preguntasPreviasTexto +
-                "\nNO agregues explicaciones, texto adicional ni comentarios. SOLO responde con un JSON válido.";
+        String prompt =
+                "Eres un generador de preguntas de trivia. Devuelve ÚNICAMENTE un JSON válido con este formato exacto:\n" +
+                        "{ \"question\": \"Texto de la pregunta\", \"options\": [\"Opción 1\", \"Opción 2\", \"Opción 3\", \"Opción 4\"], \"correctAnswer\": \"Opción correcta\" }\n" +
+                        "La pregunta debe ser sobre " + triviaRequest.getCategory() + " con dificultad " + triviaRequest.getDifficulty() + ".\n" +
+                        "Estas son las preguntas que ya se han hecho. NO repitas ninguna de ellas:\n" + preguntasPreviasTexto +
+                        "\nNO agregues explicaciones, texto adicional ni comentarios. SOLO responde con un JSON válido.";
 
         String reply = geminiService.getCompletion(prompt);
-        reply = reply.trim().replaceAll("```", "").replaceAll("(?i)^json\\s*", "").trim();
+
+        reply = reply.trim()
+                .replace("```", "")
+                .replaceAll("(?i)^json\\s*", "")
+                .trim();
 
         if (!reply.startsWith("{")) {
             throw new RuntimeException("Respuesta de Gemini no es JSON válido: " + reply);
@@ -94,8 +99,9 @@ public class TriviaService {
 
         for (UserAnswerRequest.AnswerItem answerItem : request.getAnswers()) {
             Optional<TriviaQuestion> optionalQuestion = triviaRepository.findById(answerItem.getQuestionId());
-
-            if (optionalQuestion.isEmpty()) continue;
+            if (optionalQuestion.isEmpty()) {
+                continue;
+            }
 
             TriviaQuestion question = optionalQuestion.get();
             String userAnswer = answerItem.getUserAnswer();
@@ -103,11 +109,11 @@ public class TriviaService {
 
             if (!correctAnswer.equalsIgnoreCase(userAnswer)) {
                 String prompt = String.format("""
-                Pregunta: %s
-                Tu respuesta: %s
-                Respuesta correcta: %s
-                Explica brevemente por qué la respuesta correcta es la adecuada y la del usuario es incorrecta, en máximo 3 líneas. No repitas la pregunta ni los encabezados.
-                """,
+                        Pregunta: %s
+                        Tu respuesta: %s
+                        Respuesta correcta: %s
+                        Explica brevemente por qué la respuesta correcta es la adecuada y la del usuario es incorrecta, en máximo 3 líneas. No repitas la pregunta ni los encabezados.
+                        """,
                         question.getQuestion(), userAnswer, correctAnswer);
 
                 String feedback;
@@ -117,7 +123,11 @@ public class TriviaService {
                     feedback = "No se pudo generar la explicación.";
                 }
 
-                feedback = feedback.trim().replaceAll("```", "").replaceAll("(?i)^json\\s*", "").trim();
+                feedback = feedback.trim()
+                        .replace("```", "")
+                        .replaceAll("(?i)^json\\s*", "")
+                        .trim();
+
                 question.setFeedback(feedback);
                 triviaRepository.save(question);
 
@@ -133,5 +143,4 @@ public class TriviaService {
 
         return feedbackList;
     }
-
 }

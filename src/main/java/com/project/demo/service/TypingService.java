@@ -44,7 +44,7 @@ public class TypingService {
 
     public String cleanGeminiResponse(String response) {
         return response.trim()
-                .replaceAll("```", "")
+                .replace("```", "")
                 .replaceAll("(?i)^json\\s*", "")
                 .trim();
     }
