@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.project.demo.MissionXUserTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2025-04-25T23:28:16" hostname="SEBBIE" time="0.015">
-  <properties/>
-  <testcase name="testDeleteExistingMission()" classname="com.project.demo.MissionXUserTest" time="0.008"/>
-  <testcase name="testDeleteNonExistingMission()" classname="com.project.demo.MissionXUserTest" time="0.005"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
