@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.demo.InterviewServiceTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-02-24T03:38:33" hostname="DARKO" time="3.256">
+  <properties/>
+  <testcase name="testSimulateInterview_TruncatesReplyTo1000Chars()" classname="com.project.demo.InterviewServiceTest" time="3.103"/>
+  <testcase name="testGenerateInterviewFeedback_GameNotFound_ReturnsNotFound()" classname="com.project.demo.InterviewServiceTest" time="0.029"/>
+  <testcase name="testGenerateInterviewFeedback_ValidJson_UpdatesGameAndUser_ReturnsCreated()" classname="com.project.demo.InterviewServiceTest" time="0.03"/>
+  <testcase name="testGenerateInterviewFeedback_InvalidJson_ReturnsInternalServerError()" classname="com.project.demo.InterviewServiceTest" time="0.016"/>
+  <testcase name="testSimulateInterview_WhenMaxTurnsReached_ReturnsFeedbackResponse()" classname="com.project.demo.InterviewServiceTest" time="0.016"/>
+  <testcase name="testIncrementTurn()" classname="com.project.demo.InterviewServiceTest" time="0.014"/>
+  <testcase name="testSimulateInterview_WhenNoMessages_ReturnsBadRequest()" classname="com.project.demo.InterviewServiceTest" time="0.013"/>
+  <testcase name="testSimulateInterview_NormalFlow_SavesMessages_IncrementsTurn_ReturnsCreated()" classname="com.project.demo.InterviewServiceTest" time="0.011"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (C:\Users\jpere\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.14.13\979ce25f7d3096a2e82214ba7dc972a05ce7a171\byte-buddy-agent-1.14.13.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>
