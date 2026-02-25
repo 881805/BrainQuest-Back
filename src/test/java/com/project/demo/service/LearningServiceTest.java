@@ -1,4 +1,4 @@
-package com.project.demo;
+package com.project.demo.service;
 
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.project.demo.logic.entity.learning.LearningOption;
@@ -55,8 +55,6 @@ import com.project.demo.dto.LearningScenarioRequest;
 import com.project.demo.logic.entity.learning.LearningOption;
 import com.project.demo.logic.entity.learning.LearningRepository;
 import com.project.demo.logic.entity.learning.LearningScenario;
-import com.project.demo.service.GeminiService;
-import com.project.demo.service.LearningService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

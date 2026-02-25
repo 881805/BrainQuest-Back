@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - InterviewControllerTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>InterviewControllerTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.project.demo.rest.html">com.project.demo.rest</a> &gt; InterviewControllerTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.909s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+<li>
+<a href="#tab2">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">POST /interviews/feedback: retorna 200 cuando el service responde OK</td>
+<td class="success">generateInterviewFeedback_shouldReturn200WhenServiceOk()</td>
+<td class="success">0.011s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">POST /interviews/feedback: retorna 500 cuando ocurre Exception general</td>
+<td class="success">generateInterviewFeedback_shouldReturn500OnException()</td>
+<td class="success">0.856s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">POST /interviews: retorna 200 cuando el service responde OK</td>
+<td class="success">simulateInterview_shouldReturn200WhenServiceOk()</td>
+<td class="success">0.032s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">POST /interviews: retorna 500 cuando ocurre Exception general</td>
+<td class="success">simulateInterview_shouldReturn500OnException()</td>
+<td class="success">0.010s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>23:01:23.504 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.project.demo.rest.InterviewControllerTest]: InterviewControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+23:01:23.794 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.project.demo.BrainQuest for test class com.project.demo.rest.InterviewControllerTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.5)
+
+2026-02-24T23:01:24.746-06:00  WARN 32168 --- [demo] [    Test worker] ory$DuplicateJsonObjectContextCustomizer : 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/jpere/.gradle/caches/modules-2/files-2.1/org.json/json/20210307/528c8df3757e8bcf151817b1d7b9b434f6aa08d5/json-20210307.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/jpere/.gradle/caches/modules-2/files-2.1/com.vaadin.external.google/android-json/0.0.20131108.vaadin1/fa26d351fe62a6a17f5cda1287c1c6110dec413f/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2026-02-24T23:01:24.766-06:00  INFO 32168 --- [demo] [    Test worker] c.p.demo.rest.InterviewControllerTest    : Starting InterviewControllerTest using Java 21.0.6 with PID 32168 (started by jpere in C:\Users\jpere\Documents\BrainQuest-Back)
+2026-02-24T23:01:24.768-06:00  INFO 32168 --- [demo] [    Test worker] c.p.demo.rest.InterviewControllerTest    : No active profile set, falling back to 1 default profile: &quot;default&quot;
+2026-02-24T23:01:30.611-06:00  INFO 32168 --- [demo] [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@472719df, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5cfa2ac5, org.springframework.security.web.context.SecurityContextHolderFilter@570ed9c, org.springframework.security.web.header.HeaderWriterFilter@4ad8d36f, org.springframework.web.filter.CorsFilter@4cc89246, org.springframework.security.web.csrf.CsrfFilter@1d1b3620, org.springframework.security.web.authentication.logout.LogoutFilter@3b66ac74, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@4e61a863, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@69c1ea07, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@2aa07d80, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@6ffbf0ac, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@413eaf5d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5034681f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1dfe5dd1, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3e28af44, org.springframework.security.oauth2.client.web.OAuth2AuthorizationCodeGrantFilter@686e7513, org.springframework.security.web.access.ExceptionTranslationFilter@2f166d61, org.springframework.security.web.access.intercept.AuthorizationFilter@2c154508]
+2026-02-24T23:01:30.898-06:00  INFO 32168 --- [demo] [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-02-24T23:01:30.899-06:00  INFO 32168 --- [demo] [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-02-24T23:01:30.903-06:00  INFO 32168 --- [demo] [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 4 ms
+2026-02-24T23:01:31.051-06:00  INFO 32168 --- [demo] [    Test worker] c.p.demo.rest.InterviewControllerTest    : Started InterviewControllerTest in 7.009 seconds (process running for 9.139)
+</pre>
+</span>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>WARNING: A Java agent has been loaded dynamically (C:\Users\jpere\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.14.13\979ce25f7d3096a2e82214ba7dc972a05ce7a171\byte-buddy-agent-1.14.13.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.7</a> at 24 feb 2026, 23:01:32</p>
+</div>
+</div>
+</body>
+</html>

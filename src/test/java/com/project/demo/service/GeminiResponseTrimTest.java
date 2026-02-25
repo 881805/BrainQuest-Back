@@ -1,7 +1,5 @@
-package com.project.demo;
+package com.project.demo.service;
 
-import com.project.demo.service.GeminiService;
-import com.project.demo.service.TypingService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 

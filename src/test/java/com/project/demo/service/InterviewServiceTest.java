@@ -1,4 +1,4 @@
-package com.project.demo;
+package com.project.demo.service;
 
 //import com.project.demo.logic.entity.game.Game;
 //
@@ -52,8 +52,6 @@ import com.project.demo.logic.entity.message.Message;
 import com.project.demo.logic.entity.message.MessageRepository;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
-import com.project.demo.service.GeminiService;
-import com.project.demo.service.InterviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

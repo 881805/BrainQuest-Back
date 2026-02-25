@@ -1,4 +1,4 @@
-package com.project.demo;
+package com.project.demo.service;
 
 import com.project.demo.logic.entity.game.Game;
 import com.project.demo.logic.entity.game.GameRepository;

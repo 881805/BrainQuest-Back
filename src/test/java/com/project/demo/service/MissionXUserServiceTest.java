@@ -1,11 +1,10 @@
-package com.project.demo;
+package com.project.demo.service;
 
 
 import com.project.demo.logic.entity.mission.Mission;
 import com.project.demo.logic.entity.missionXUser.MissionXUser;
 import com.project.demo.logic.entity.missionXUser.MissionXUserRepository;
 import com.project.demo.logic.entity.user.User;
-import com.project.demo.service.MissionXUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

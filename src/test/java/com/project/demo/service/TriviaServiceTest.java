@@ -1,4 +1,4 @@
-package com.project.demo;
+package com.project.demo.service;
 
 
 //import com.project.demo.logic.entity.trivia.Option;
@@ -121,8 +121,6 @@ import com.project.demo.dto.UserAnswerRequest;
 import com.project.demo.logic.entity.trivia.Option;
 import com.project.demo.logic.entity.trivia.TriviaQuestion;
 import com.project.demo.logic.entity.trivia.TriviaRepository;
-import com.project.demo.service.GeminiService;
-import com.project.demo.service.TriviaService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
