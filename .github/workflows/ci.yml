@@ -9,6 +9,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mariadb:
+        image: mariadb:11
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: brainquest
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v3
@@ -21,18 +30,55 @@ jobs:
 
       - name: Dar permisos a gradlew
         run: chmod +x gradlew
-      - name: Levantar aplicación
+
+      - name: Esperar a MariaDB
+        run: |
+          echo "Esperando a MariaDB..."
+          for i in {1..30}; do
+            nc -z localhost 3306 && echo "MariaDB lista!" && exit 0
+            sleep 2
+          done
+          echo "MariaDB no respondió a tiempo" && exit 1
+
+      - name: Levantar aplicación en background
         env:
+          GOOGLEAI_API_KEY: ${{ secrets.GOOGLEAI_API_KEY }}
           SECURITY_JWT_SECRET_KEY: ${{ secrets.SECURITY_JWT_SECRET_KEY }}
           SECURITY_JWT_EXPIRATION_TIME: ${{ secrets.SECURITY_JWT_EXPIRATION_TIME }}
+          SPRING_DATASOURCE_URL: jdbc:mariadb://localhost:3306/brainquest
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: root
+          GEMINI_BASEURL: ${{ secrets.GEMINI_BASEURL }}
+          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID }}
+          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET }}
+          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE }}
+          APP_DEFAULT_SUPERADMIN_PASSWORD: ${{ secrets.APP_DEFAULT_SUPERADMIN_PASSWORD }}
+          APP_DEFAULT_AI_PASSWORD: ${{ secrets.APP_DEFAULT_AI_PASSWORD }}
+          SPRING_JACKSON_TIME_ZONE: ${{ secrets.SPRING_JACKSON_TIME_ZONE }}
+          SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE }}
         run: |
           ./gradlew bootRun --args='--spring.profiles.active=test' &
-          
+
           echo "Esperando a que el servidor esté listo..."
           for i in {1..30}; do
-            curl -s http://localhost:8080/actuator/health && break
+            curl -s http://localhost:8080/actuator/health && echo "Servidor listo!" && break
             sleep 2
           done
 
       - name: Ejecutar build
+        env:
+          GOOGLEAI_API_KEY: ${{ secrets.GOOGLEAI_API_KEY }}
+          SECURITY_JWT_SECRET_KEY: ${{ secrets.SECURITY_JWT_SECRET_KEY }}
+          SECURITY_JWT_EXPIRATION_TIME: ${{ secrets.SECURITY_JWT_EXPIRATION_TIME }}
+          SPRING_DATASOURCE_URL: jdbc:mariadb://localhost:3306/brainquest
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: root
+          GEMINI_BASEURL: ${{ secrets.GEMINI_BASEURL }}
+          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID }}
+          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET }}
+          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE }}
+          APP_DEFAULT_SUPERADMIN_PASSWORD: ${{ secrets.APP_DEFAULT_SUPERADMIN_PASSWORD }}
+          APP_DEFAULT_AI_PASSWORD: ${{ secrets.APP_DEFAULT_AI_PASSWORD }}
+          SPRING_JACKSON_TIME_ZONE: ${{ secrets.SPRING_JACKSON_TIME_ZONE }}
+          SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE }}
         run: ./gradlew build
