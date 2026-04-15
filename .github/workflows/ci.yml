@@ -25,7 +25,11 @@ jobs:
       - name: Levantar aplicación
         run: |
           ./gradlew bootRun &
-          sleep 20
+          echo "Esperando a que el servidor esté listo..."
+          for i in {1..30}; do
+            curl -s http://localhost:8080/actuator/health && break
+            sleep 2
+          done
 
-      - name: Ejecutar build y pruebas unitarias
+      - name: Ejecutar build
         run: ./gradlew build
