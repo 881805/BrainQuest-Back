@@ -16,11 +16,23 @@ jobs:
       - name: Configurar Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'  
-          java-version: '21'       
+          distribution: 'zulu'
+          java-version: '21'
 
       - name: Dar permisos a gradlew
         run: chmod +x gradlew
 
-      - name: Ejecutar build y pruebas unitarias
+      - name: Levantar aplicación
+        env:
+          SECURITY_JWT_SECRET_KEY: ${{ secrets.SECURITY_JWT_SECRET_KEY }}
+          SECURITY_JWT_EXPIRATION_TIME: "3153600000000"
+        run: |
+          ./gradlew bootRun &
+          echo "Esperando a que el servidor esté listo..."
+          for i in {1..30}; do
+            curl -s http://localhost:8080/actuator/health && break
+            sleep 2
+          done
+
+      - name: Ejecutar build
         run: ./gradlew build
