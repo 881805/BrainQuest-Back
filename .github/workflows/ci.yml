@@ -17,11 +17,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: brainquest
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - name: Checkout código
@@ -35,6 +30,16 @@ jobs:
 
       - name: Dar permisos a gradlew
         run: chmod +x gradlew
+
+      # 👇 Esperar manualmente a que MariaDB esté lista
+      - name: Esperar a MariaDB
+        run: |
+          echo "Esperando a MariaDB..."
+          for i in {1..30}; do
+            nc -z localhost 3306 && echo "MariaDB lista!" && exit 0
+            sleep 2
+          done
+          echo "MariaDB no respondió a tiempo" && exit 1
 
       - name: Levantar aplicación
         env:
