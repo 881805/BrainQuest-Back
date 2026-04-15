@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.demo.funcional.TypingTests" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-09T01:12:41" hostname="SEBBIE" time="9.645">
+  <properties/>
+  <testcase name="shouldGenerateTypingExerciseSuccessfully()" classname="com.project.demo.funcional.TypingTests" time="2.241"/>
+  <testcase name="shouldHandleServerErrorGracefully()" classname="com.project.demo.funcional.TypingTests" time="3.204"/>
+  <testcase name="shouldGenerateTypingEvenWhenFieldsAreEmpty()" classname="com.project.demo.funcional.TypingTests" time="4.16"/>
+  <testcase name="shouldGetAllTypingExercises()" classname="com.project.demo.funcional.TypingTests" time="0.04"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

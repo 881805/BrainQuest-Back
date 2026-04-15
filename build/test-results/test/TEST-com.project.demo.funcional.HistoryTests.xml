@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.demo.funcional.HistoryTests" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-09T01:12:31" hostname="SEBBIE" time="0.182">
+  <properties/>
+  <testcase name="shouldReturn404WhenUserNotFound()" classname="com.project.demo.funcional.HistoryTests" time="0.045"/>
+  <testcase name="shouldReturnEmptyListWhenNoActiveHistory()" classname="com.project.demo.funcional.HistoryTests" time="0.061"/>
+  <testcase name="shouldReturnHistoryWhenValidUserAndGameType()" classname="com.project.demo.funcional.HistoryTests" time="0.05"/>
+  <testcase name="shouldReturn400WhenGameTypeInvalid()" classname="com.project.demo.funcional.HistoryTests" time="0.023"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

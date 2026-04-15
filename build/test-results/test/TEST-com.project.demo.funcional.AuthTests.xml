@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.demo.funcional.AuthTests" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-09T01:12:28" hostname="SEBBIE" time="2.683">
+  <properties/>
+  <testcase name="shouldLoginSuccessfully()" classname="com.project.demo.funcional.AuthTests" time="2.314"/>
+  <testcase name="shouldReturnConflictWhenEmailExists()" classname="com.project.demo.funcional.AuthTests" time="0.051"/>
+  <testcase name="shouldFailLoginWithWrongPassword()" classname="com.project.demo.funcional.AuthTests" time="0.114"/>
+  <testcase name="shouldSignupSuccessfully()" classname="com.project.demo.funcional.AuthTests" time="0.2"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

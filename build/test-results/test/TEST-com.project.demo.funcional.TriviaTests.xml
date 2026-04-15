@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.demo.funcional.TriviaTests" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-09T01:12:31" hostname="SEBBIE" time="9.717">
+  <properties/>
+  <testcase name="shouldReturnCorrectStructureWhenTriviaIsCreated()" classname="com.project.demo.funcional.TriviaTests" time="4.985"/>
+  <testcase name="shouldHandleEmptyFieldsAccordingToCurrentBehavior()" classname="com.project.demo.funcional.TriviaTests" time="2.343"/>
+  <testcase name="shouldGenerateTriviaSuccessfully()" classname="com.project.demo.funcional.TriviaTests" time="2.296"/>
+  <testcase name="shouldGetAllTriviaQuestions()" classname="com.project.demo.funcional.TriviaTests" time="0.091"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
