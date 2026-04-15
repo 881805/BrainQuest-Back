@@ -2,21 +2,18 @@ package com.project.demo.logic.entity.rol;
 
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 
-
 import java.util.Optional;
 
 @Component
-public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
+public class AdminSeeder implements ApplicationListener<ApplicationReadyEvent> {
     private final RoleRepository roleRepository;
-
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.default.superadmin.password}")
@@ -27,7 +24,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
     public AdminSeeder(
             RoleRepository roleRepository,
-            UserRepository  userRepository,
+            UserRepository userRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.roleRepository = roleRepository;
@@ -36,7 +33,7 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
     }
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+    public void onApplicationEvent(ApplicationReadyEvent event) {
         this.createSuperAdministrator();
         this.createAIUser();
     }
@@ -66,19 +63,21 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
         userRepository.save(user);
     }
-    private void createAIUser(){
+
+    private void createAIUser() {
         User aiUser = new User();
         aiUser.setName("Gemini");
         aiUser.setLastname("Google");
         aiUser.setEmail("gemini.google@gmail.com");
         aiUser.setPassword(passwordEncoder.encode(aiPassword));
         aiUser.setExperience(0L);
+
         Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
         Optional<User> optionalUser = userRepository.findByEmail(aiUser.getEmail());
 
         aiUser.setRole(optionalRole.get());
 
-        if ( optionalUser.isPresent()) {
+        if (optionalUser.isPresent()) {
             return;
         }
 
