@@ -16,11 +16,16 @@ jobs:
       - name: Configurar Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'  
-          java-version: '21'       
+          distribution: 'zulu'
+          java-version: '21'
 
       - name: Dar permisos a gradlew
         run: chmod +x gradlew
+
+      - name: Levantar aplicación
+        run: |
+          ./gradlew bootRun &
+          sleep 20
 
       - name: Ejecutar build y pruebas unitarias
         run: ./gradlew build
