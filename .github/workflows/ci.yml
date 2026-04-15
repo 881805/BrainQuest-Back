@@ -22,6 +22,9 @@ jobs:
       - name: Dar permisos a gradlew
         run: chmod +x gradlew
       - name: Levantar aplicación
+        env:
+          SECURITY_JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          SECURITY_JWT_EXPIRATION_TIME: ${{ secrets.JWT_EXPIRATION_TIME }}
         run: |
           ./gradlew bootRun --args='--spring.profiles.active=test' &
           
