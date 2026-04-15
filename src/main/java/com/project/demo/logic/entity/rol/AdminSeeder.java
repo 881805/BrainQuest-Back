@@ -41,6 +41,9 @@ public class AdminSeeder implements ApplicationRunner {
         createAIUser();
     }
 
+
+
+    
     private void createSuperAdministrator() {
 
         String email = "super.admin@gmail.com";
