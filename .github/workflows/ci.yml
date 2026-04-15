@@ -59,7 +59,7 @@ jobs:
           AI_PASSWORD: ${{ secrets.AI_PASSWORD }}
 
         run: |
-          ./gradlew bootRun --args='--spring.profiles.active=test' &
+          ./gradlew bootRun &
           
           echo "Esperando a que el servidor esté listo..."
           for i in {1..30}; do
