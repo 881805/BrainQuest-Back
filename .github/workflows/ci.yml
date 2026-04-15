@@ -9,6 +9,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mariadb:
+        image: mariadb:11
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: brainquest
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v3
@@ -21,26 +35,24 @@ jobs:
 
       - name: Dar permisos a gradlew
         run: chmod +x gradlew
+
       - name: Levantar aplicación
         env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-        
-          SECURITY_JWT_SECRET_KEY: ${{ secrets.SECURITY_JWT_SECRET_KEY }}
-          SECURITY_JWT_EXPIRATION_TIME: ${{ secrets.SECURITY_JWT_EXPIRATION_TIME }}
-        
+          DB_URL: jdbc:mariadb://localhost:3306/brainquest
+          DB_USERNAME: root
+          DB_PASSWORD: root
+
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
+
           GEMINI_BASEURL: ${{ secrets.GEMINI_BASEURL }}
-        
-          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID }}
-          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET }}
-          SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE: ${{ secrets.SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_SCOPE }}
-        
-          APP_DEFAULT_SUPERADMIN_PASSWORD: ${{ secrets.APP_DEFAULT_SUPERADMIN_PASSWORD }}
-          APP_DEFAULT_AI_PASSWORD: ${{ secrets.APP_DEFAULT_AI_PASSWORD }}
-        
-          SPRING_JACKSON_TIME_ZONE: ${{ secrets.SPRING_JACKSON_TIME_ZONE }}
-          SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE }}
+
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+
+          SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
+          AI_PASSWORD: ${{ secrets.AI_PASSWORD }}
+
         run: |
           ./gradlew bootRun --args='--spring.profiles.active=test' &
           
