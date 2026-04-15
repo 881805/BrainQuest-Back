@@ -25,6 +25,7 @@ jobs:
       - name: Levantar aplicación
         env:
           SECURITY_JWT_SECRET_KEY: ${{ secrets.SECURITY_JWT_SECRET_KEY }}
+          SECURITY_JWT_EXPIRATION_TIME: "3153600000000"
         run: |
           ./gradlew bootRun &
           echo "Esperando a que el servidor esté listo..."
