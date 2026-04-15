@@ -23,6 +23,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Levantar aplicación
+        env:
+          SECURITY_JWT_SECRET_KEY: ${{ secrets.SECURITY_JWT_SECRET_KEY }}
         run: |
           ./gradlew bootRun &
           echo "Esperando a que el servidor esté listo..."
