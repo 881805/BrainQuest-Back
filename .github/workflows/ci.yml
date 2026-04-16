@@ -64,7 +64,10 @@ jobs:
             curl -s http://localhost:8080/actuator/health && echo "Servidor listo!" && break
             sleep 2
           done
-
+          
+      - name: Run tests
+        run: ./gradlew test
+        
       - name: Ejecutar build
         env:
           GOOGLEAI_API_KEY: ${{ secrets.GOOGLEAI_API_KEY }}
@@ -83,5 +86,4 @@ jobs:
           SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE }}
         run: ./gradlew build
 
-      - name: Run tests (includes REST Assured)
-        run: ./gradlew test
+
