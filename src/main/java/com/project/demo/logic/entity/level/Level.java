@@ -2,9 +2,16 @@ package com.project.demo.logic.entity.level;
 
 import jakarta.persistence.*;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Entity
 @Table(name = "level")
-public class Level {
+public class Level implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,8 +20,7 @@ public class Level {
     private int expRequired;
     private String description;
 
-    public Level() {
-    }
+    public Level() {}
 
     public Level(String name, int expRequired, String description) {
         this.name = name;

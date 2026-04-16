@@ -25,7 +25,7 @@ public class MissionXUserService {
     @Autowired
     private UserRepository userRepository;
 
-    public ResponseEntity<?> updateMission(MissionXUser mission, long missionId, HttpServletRequest request ) {
+    public ResponseEntity<Object> updateMission(MissionXUser mission, long missionId, HttpServletRequest request ) {
         Optional<MissionXUser> foundMission = missionXUserRepository.findById(missionId);
 
         if (!foundMission.isPresent()) {

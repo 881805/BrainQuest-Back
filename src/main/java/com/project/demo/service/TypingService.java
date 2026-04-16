@@ -42,9 +42,9 @@ public class TypingService {
                 ". NO agregues explicaciones, texto adicional ni comentarios, SOLO el JSON.";
     }
 
-    private String cleanGeminiResponse(String response) {
+    public String cleanGeminiResponse(String response) {
         return response.trim()
-                .replaceAll("```", "")
+                .replace("```", "")
                 .replaceAll("(?i)^json\\s*", "")
                 .trim();
     }

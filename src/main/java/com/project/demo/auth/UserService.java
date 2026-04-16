@@ -26,7 +26,7 @@ public class UserService {
                     User newUser = new User();
                     newUser.setEmail(email);
                     newUser.setName(name);
-                    newUser.getProvider("Google");
+                    newUser.setProvider("Google");
                     newUser.setGoogleId(googleId);
                     return userRepository.save(newUser);
                 });

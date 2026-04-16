@@ -35,7 +35,7 @@ public class InterviewController {
     @Transactional
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> simulateInterview(@RequestBody Game game, HttpServletRequest request) {
+    public ResponseEntity<Object> simulateInterview(@RequestBody Game game, HttpServletRequest request) {
         try {
             return interviewService.simulateInterview(game, request);
         } catch (Exception e) {
@@ -46,7 +46,7 @@ public class InterviewController {
 
     @PostMapping("/feedback")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> generateInterviewFeedback(@RequestBody Game game, HttpServletRequest request) {
+    public ResponseEntity<Object> generateInterviewFeedback(@RequestBody Game game, HttpServletRequest request) {
         try {
             return interviewService.generateInterviewFeedback(game, request);
         } catch (Exception e) {

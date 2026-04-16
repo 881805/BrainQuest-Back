@@ -15,6 +15,10 @@ public class Option {
         this.isCorrect = isCorrect;
     }
 
+    public Option(String text) {
+        this.text = text;
+    }
+
     public String getText() {
         return text;
     }

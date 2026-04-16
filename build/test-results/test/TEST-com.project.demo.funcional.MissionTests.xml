@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.project.demo.funcional.MissionTests" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-09T01:12:31" hostname="SEBBIE" time="0.093">
+  <properties/>
+  <testcase name="shouldFailWhenInvalidDataProvided()" classname="com.project.demo.funcional.MissionTests" time="0.023"/>
+  <testcase name="shouldHandlePartialUpdate()" classname="com.project.demo.funcional.MissionTests" time="0.025"/>
+  <testcase name="shouldUpdateMissionSuccessfully()" classname="com.project.demo.funcional.MissionTests" time="0.021"/>
+  <testcase name="shouldReturn404WhenMissionNotFound()" classname="com.project.demo.funcional.MissionTests" time="0.023"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

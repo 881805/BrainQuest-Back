@@ -45,7 +45,7 @@ public class HistoryController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createHistory(@RequestBody History history, HttpServletRequest request) {
+    public ResponseEntity<Object> createHistory(@RequestBody History history, HttpServletRequest request) {
 
         User user = userRepository.findById(history.getUser().getId()).orElse(null);
 
@@ -63,7 +63,7 @@ public class HistoryController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
@@ -83,7 +83,7 @@ public class HistoryController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getByUserId(
+    public ResponseEntity<Object> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -111,7 +111,7 @@ public class HistoryController {
 
     @GetMapping("/{gameType}/{userId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getByUserAndGameTypeAndIsActive(
+    public ResponseEntity<Object> getByUserAndGameTypeAndIsActive(
             @PathVariable Long userId,
             @PathVariable String gameType,
             @RequestParam(defaultValue = "1") int page,
@@ -157,7 +157,7 @@ public class HistoryController {
 
     @PutMapping("/{userID}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateGame(@RequestBody History history, HttpServletRequest request) {
+    public ResponseEntity<Object> updateGame(@RequestBody History history, HttpServletRequest request) {
         History foundHistory = historyRepository.findById(history.getId()).orElse(null);
         User user = userRepository.findById(history.getUser().getId()).orElse(null);
         Game game = gameRepository.findById(history.getGame().getId()).orElse(null);
@@ -175,7 +175,7 @@ public class HistoryController {
 
     @DeleteMapping("/{historyId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public ResponseEntity<?> deleteHistory(@PathVariable Long historyId, HttpServletRequest request) {
+    public ResponseEntity<Object> deleteHistory(@PathVariable Long historyId, HttpServletRequest request) {
         Optional<History> foundGame = historyRepository.findById(historyId);
         if(foundGame.isPresent()) {
             historyRepository.delete(foundGame.get());

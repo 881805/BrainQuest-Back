@@ -44,7 +44,7 @@ public class ConversationController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createConversation(@RequestBody Conversation conversation, HttpServletRequest request) {
+    public ResponseEntity<Object> createConversation(@RequestBody Conversation conversation, HttpServletRequest request) {
 
         User user1 = userRepository.findById(conversation.getUser1().getId()).orElseThrow(() -> new RuntimeException("User not found"));
         User user2 = userRepository.findById(conversation.getUser2().getId()).orElse(null);
@@ -60,7 +60,7 @@ public class ConversationController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAllbyUserId(
+    public ResponseEntity<Object> getAllbyUserId(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request,
@@ -85,7 +85,7 @@ public class ConversationController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
@@ -107,7 +107,7 @@ public class ConversationController {
 
     @DeleteMapping("/{conversationId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> deleteConversation(@PathVariable Long conversationId) {
+    public ResponseEntity<Object> deleteConversation(@PathVariable Long conversationId) {
         Optional<Conversation> conversationOptional = conversationRepository.findById(conversationId);
 
         if (conversationOptional.isEmpty()) {

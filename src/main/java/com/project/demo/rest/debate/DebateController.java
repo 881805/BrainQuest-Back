@@ -59,9 +59,9 @@ public class DebateController {
     @Transactional
     @PostMapping()
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> messageSent(@RequestBody Game game, HttpServletRequest request) {
+    public ResponseEntity<Object> messageSent(@RequestBody Game game, HttpServletRequest request) {
 
-        ResponseEntity<?> response = null;
+        ResponseEntity<Object> response = null;
         try{
             response = debateService.handleMessages(game);
         }catch (Exception e){

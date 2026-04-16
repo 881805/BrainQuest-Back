@@ -1,6 +1,5 @@
 package com.project.demo.rest.message;
 
-
 import com.project.demo.logic.entity.Objective.Objective;
 import com.project.demo.logic.entity.Objective.ObjectiveRepository;
 import com.project.demo.logic.entity.gameType.GameType;
@@ -44,7 +43,7 @@ public class MissionController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> createMission(@RequestBody Mission mission, HttpServletRequest request) {
+    public ResponseEntity<Object> createMission(@RequestBody Mission mission, HttpServletRequest request) {
         Optional<User> optionalUser = userRepository.findById(mission.getCreatedBy().getId());
         Optional<GameType> optionalGameType = gameTypeRepository.findById(mission.getGameType().getId());
         mission.setCreatedBy(optionalUser.get());
@@ -61,7 +60,7 @@ public class MissionController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
@@ -81,7 +80,7 @@ public class MissionController {
 
     @GetMapping("/{missionId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request,
@@ -103,7 +102,7 @@ public class MissionController {
 
     @PutMapping("/{missionId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> updateMessage(@PathVariable Long missionId, @RequestBody Mission mission, HttpServletRequest request) {
+    public ResponseEntity<Object> updateMessage(@PathVariable Long missionId, @RequestBody Mission mission, HttpServletRequest request) {
         Optional<Mission> foundMission = missionRepository.findById(missionId);
 
         if (!foundMission.isPresent()) {
@@ -136,7 +135,7 @@ public class MissionController {
 
     @DeleteMapping("/{missionId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<?> deleteMessage(@PathVariable Long missionId, HttpServletRequest request) {
+    public ResponseEntity<Object> deleteMessage(@PathVariable Long missionId, HttpServletRequest request) {
         Optional<Mission> foundMission = missionRepository.findById(missionId);
         if(foundMission.isPresent()) {
             missionRepository.delete(foundMission.get());

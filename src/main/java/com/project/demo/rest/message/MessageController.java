@@ -27,7 +27,7 @@ import java.util.Optional;
 @RestController
 public class MessageController {
 
-
+    public static final String NOT_FOUND = " not found";
     @Autowired
     private UserRepository userRepository;
 
@@ -49,7 +49,7 @@ public class MessageController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createMessage(@RequestBody Message message, HttpServletRequest request) {
+    public ResponseEntity<Object> createMessage(@RequestBody Message message, HttpServletRequest request) {
         Optional<User> optionalUser = userRepository.findById(message.getUser().getId());
         message.setUser(optionalUser.get());
         messageRepository.save(message);
@@ -62,7 +62,7 @@ public class MessageController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
@@ -82,7 +82,7 @@ public class MessageController {
 
     @GetMapping("/{conversationId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request,
@@ -105,18 +105,18 @@ public class MessageController {
 
     @PutMapping("/{messageId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateMessage(@PathVariable Long messageId, @RequestBody Message message, HttpServletRequest request) {
+    public ResponseEntity<Object> updateMessage(@PathVariable Long messageId, @RequestBody Message message, HttpServletRequest request) {
         Optional<Message> foundMessage = messageRepository.findById(messageId);
 
         if (!foundMessage.isPresent()) {
-            return new GlobalResponseHandler().handleResponse("Message ID " + messageId + " not found",
+            return new GlobalResponseHandler().handleResponse("Message ID " + messageId + NOT_FOUND,
                     HttpStatus.NOT_FOUND, request);
         }
 
         Optional<User> foundUser = userRepository.findById(message.getUser().getId());
 
         if (!foundUser.isPresent()) {
-            return new GlobalResponseHandler().handleResponse("Message ID " + messageId + " not found",
+            return new GlobalResponseHandler().handleResponse("Message ID " + messageId + NOT_FOUND,
                     HttpStatus.NOT_FOUND, request);
         }
 
@@ -143,7 +143,7 @@ public class MessageController {
 
     @DeleteMapping("/{messageId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public ResponseEntity<?> deleteMessage(@PathVariable Long messageId, HttpServletRequest request) {
+    public ResponseEntity<Object> deleteMessage(@PathVariable Long messageId, HttpServletRequest request) {
         Optional<Message> foundMessage = messageRepository.findById(messageId);
         if(foundMessage.isPresent()) {
             messageRepository.delete(foundMessage.get());
@@ -151,7 +151,7 @@ public class MessageController {
             return new GlobalResponseHandler().handleResponse("Message deleted successfully",
                     foundMessage.get(), HttpStatus.OK, request);
         } else {
-            return new GlobalResponseHandler().handleResponse("Message id " + messageId + " not found"  ,
+            return new GlobalResponseHandler().handleResponse("Message id " + messageId + NOT_FOUND  ,
                     HttpStatus.NOT_FOUND, request);
         }
     }

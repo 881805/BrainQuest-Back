@@ -2,24 +2,32 @@ package com.project.demo.logic.entity.rol;
 
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Optional;
 
 @Component
-public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
+@Order(2) // Ensure roles are seeded before this (RoleSeeder should be @Order(1))
+public class AdminSeeder implements ApplicationRunner {
+
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${app.default.superadmin.password}")
+    private String superAdminPassword;
+
+    @Value("${app.default.ai.password}")
+    private String aiPassword;
 
     public AdminSeeder(
             RoleRepository roleRepository,
-            UserRepository  userRepository,
+            UserRepository userRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.roleRepository = roleRepository;
@@ -27,54 +35,69 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
         this.passwordEncoder = passwordEncoder;
     }
 
+
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        this.createSuperAdministrator();
-        this.createAIUser();
+    public void run(ApplicationArguments args) throws Exception {
+        Thread.sleep(20000); // wait 5 seconds
+        createSuperAdministrator();
+        createAIUser();
     }
+
 
 
     private void createSuperAdministrator() {
-        User superAdmin = new User();
-        superAdmin.setName("Super");
-        superAdmin.setLastname("Admin");
-        superAdmin.setEmail("super.admin@gmail.com");
-        superAdmin.setPassword("superadmin123");
-        superAdmin.setExperience(0L);
 
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.SUPER_ADMIN);
-        Optional<User> optionalUser = userRepository.findByEmail(superAdmin.getEmail());
+        String email = "super.admin@gmail.com";
 
-        if (optionalRole.isEmpty() || optionalUser.isPresent()) {
+        Optional<User> existingUser = userRepository.findByEmail(email);
+        if (existingUser.isPresent()) {
+            System.out.println("SuperAdmin already exists");
             return;
         }
 
-        var user = new User();
-        user.setName(superAdmin.getName());
-        user.setLastname(superAdmin.getLastname());
-        user.setEmail(superAdmin.getEmail());
-        user.setPassword(passwordEncoder.encode(superAdmin.getPassword()));
-        user.setRole(optionalRole.get());
+        Optional<Role> roleOpt = roleRepository.findByName(RoleEnum.SUPER_ADMIN);
+        if (roleOpt.isEmpty()) {
+            System.out.println("SUPER_ADMIN role not found. Skipping SuperAdmin creation.");
+            return;
+        }
+
+        User user = new User();
+        user.setName("Super");
+        user.setLastname("Admin");
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(superAdminPassword));
+        user.setRole(roleOpt.get());
         user.setExperience(0L);
 
         userRepository.save(user);
+        System.out.println("SuperAdmin created");
     }
-    private void createAIUser(){
-        User aiUser = new User();
-        aiUser.setName("Gemini");
-        aiUser.setLastname("Google");
-        aiUser.setEmail("gemini.google@gmail.com");
-        aiUser.setPassword(passwordEncoder.encode("123456976345425843252sdfgsr@D!"));
-        aiUser.setExperience(0L);
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
-        Optional<User> optionalUser = userRepository.findByEmail(aiUser.getEmail());
 
-        aiUser.setRole(optionalRole.get());
+    private void createAIUser() {
 
-        if ( optionalUser.isPresent()) {
+        String email = "gemini.google@gmail.com";
+
+        Optional<User> existingUser = userRepository.findByEmail(email);
+        if (existingUser.isPresent()) {
+            System.out.println("AI user already exists");
             return;
         }
 
+        Optional<Role> roleOpt = roleRepository.findByName(RoleEnum.USER);
+        if (roleOpt.isEmpty()) {
+            System.out.println("USER role not found. Skipping AI user creation.");
+            return;
+        }
+
+        User aiUser = new User();
+        aiUser.setName("Gemini");
+        aiUser.setLastname("Google");
+        aiUser.setEmail(email);
+        aiUser.setPassword(passwordEncoder.encode(aiPassword));
+        aiUser.setRole(roleOpt.get());
+        aiUser.setExperience(0L);
+
         userRepository.save(aiUser);
+        System.out.println("AI user created");
     }
 }

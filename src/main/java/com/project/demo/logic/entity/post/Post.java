@@ -1,4 +1,4 @@
-package com.project.demo.logic.entity;
+package com.project.demo.logic.entity.post;
 
 import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;

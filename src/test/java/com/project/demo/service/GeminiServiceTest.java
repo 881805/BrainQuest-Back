@@ -1,8 +1,7 @@
-package com.project.demo;
+package com.project.demo.service;
 
 import com.project.demo.gemini.GeminiInterface;
 import com.project.demo.gemini.GeminiRecords.*;
-import com.project.demo.service.GeminiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -46,7 +45,7 @@ public class GeminiServiceTest {
 
 
         String actual = geminiService.getCompletion(inputText);
-        
+
         assertEquals(expectedText, actual);
     }
 }

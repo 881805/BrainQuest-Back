@@ -24,7 +24,7 @@ public class MissionScheduler {
         
 
     // This will run every 5 minutes (300,000 milliseconds)
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 60000, initialDelay = 10000) // espera 10s antes de la primera ejecución
     public void updateExpiredMissions() {
         List<Mission> expiredMissions = missionRepository.findByEndDateBeforeAndIsActiveTrue(LocalDate.now());
 

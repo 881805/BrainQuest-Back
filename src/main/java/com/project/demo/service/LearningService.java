@@ -6,7 +6,6 @@ import com.project.demo.dto.LearningScenarioRequest;
 import com.project.demo.logic.entity.learning.LearningOption;
 import com.project.demo.logic.entity.learning.LearningRepository;
 import com.project.demo.logic.entity.learning.LearningScenario;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,37 +33,41 @@ public class LearningService {
             prevQuestionsText.append("- ").append(scenario.getQuestion()).append("\n");
         }
 
-        String lastNarrative = prevSteps.isEmpty() ? "" : prevSteps.get(prevSteps.size() - 1).getNarrative();
+        String lastNarrative = prevSteps.isEmpty()
+                ? ""
+                : prevSteps.get(prevSteps.size() - 1).getNarrative();
 
         String prompt = String.format("""
-            Eres un experto en diseño de experiencias de aprendizaje interactivas. Tu tarea es generar un *nuevo paso* de un escenario educativo progresivo para el tema: "%s".
+                Eres un experto en diseño de experiencias de aprendizaje interactivas. Tu tarea es generar un *nuevo paso* de un escenario educativo progresivo para el tema: "%s".
 
-            Este es el paso #%d de la secuencia. La historia debe tener continuidad narrativa con el paso anterior.
+                Este es el paso #%d de la secuencia. La historia debe tener continuidad narrativa con el paso anterior.
 
-            Paso anterior (para continuar la historia):
-            "%s"
+                Paso anterior (para continuar la historia):
+                "%s"
 
-            Preguntas ya usadas para evitar repeticiones:
-            %s
+                Preguntas ya usadas para evitar repeticiones:
+                %s
 
-            Formato de salida (solo JSON, sin texto adicional):
-            {
-              "narrative": "Una breve historia o contexto del escenario (2 a 3 líneas)",
-              "question": "Una pregunta clave basada en la narrativa",
-              "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
-              "correctAnswer": "Texto exacto de la opción correcta"
-            }
+                Formato de salida (solo JSON, sin texto adicional):
+                {
+                  "narrative": "Una breve historia o contexto del escenario (2 a 3 líneas)",
+                  "question": "Una pregunta clave basada en la narrativa",
+                  "options": ["Opción A", "Opción B", "Opción C", "Opción D"],
+                  "correctAnswer": "Texto exacto de la opción correcta"
+                }
 
-            Instrucciones adicionales:
-            - No repitas narrativa ni preguntas previas.
-            - Mantén la historia conectada y coherente entre pasos.
-            - Asegúrate de que la pregunta esté basada directamente en la narrativa.
-            - Usa un lenguaje educativo y amigable.
-            - NO agregues ningún texto explicativo fuera del JSON.
-        """, topic, step, lastNarrative, prevQuestionsText);
+                Instrucciones adicionales:
+                - No repitas narrativa ni preguntas previas.
+                - Mantén la historia conectada y coherente entre pasos.
+                - Asegúrate de que la pregunta esté basada directamente en la narrativa.
+                - Usa un lenguaje educativo y amigable.
+                - NO agregues ningún texto explicativo fuera del JSON.
+                """, topic, step, lastNarrative, prevQuestionsText);
 
-        String reply = geminiService.getCompletion(prompt).trim()
-                .replaceAll("```", "")
+        String reply = geminiService.getCompletion(prompt);
+
+        reply = reply.trim()
+                .replace("```", "")
                 .replaceAll("(?i)^json\\s*", "")
                 .trim();
 
@@ -90,7 +93,7 @@ public class LearningService {
         LearningScenario scenario = optional.get();
         String correct = scenario.getCorrectAnswer();
 
-        if (userAnswer.equalsIgnoreCase(correct)) {
+        if (userAnswer != null && userAnswer.equalsIgnoreCase(correct)) {
             scenario.setUserAnswer(userAnswer);
             learningRepository.save(scenario);
             return Map.of("message", "¡Respuesta correcta!");
@@ -104,20 +107,21 @@ public class LearningService {
         }
 
         String prompt = String.format("""
-            Eres un tutor educativo. El estudiante eligió una opción incorrecta en una pregunta de aprendizaje progresivo.
+                Eres un tutor educativo. El estudiante eligió una opción incorrecta en una pregunta de aprendizaje progresivo.
 
-            Escenario: %s
-            Pregunta: %s
-            Tu respuesta: %s
-            Respuesta correcta: %s
+                Escenario: %s
+                Pregunta: %s
+                Tu respuesta: %s
+                Respuesta correcta: %s
 
-            Explica brevemente por qué la respuesta correcta es la adecuada y la del usuario es incorrecta (máx. 3 líneas).
-            Responde solo con el texto explicativo, sin encabezados ni enumeraciones.
-        """, scenario.getNarrative(), scenario.getQuestion(), userAnswer, correct);
+                Explica brevemente por qué la respuesta correcta es la adecuada y la del usuario es incorrecta (máx. 3 líneas).
+                Responde solo con el texto explicativo, sin encabezados ni enumeraciones.
+                """, scenario.getNarrative(), scenario.getQuestion(), userAnswer, correct);
 
         String feedback;
         try {
-            feedback = geminiService.getCompletion(prompt).trim();
+            feedback = geminiService.getCompletion(prompt);
+            feedback = (feedback == null) ? "" : feedback.trim();
             if (feedback.isBlank()) {
                 feedback = "No se pudo generar una explicación válida. Intenta nuevamente.";
             }
@@ -125,7 +129,11 @@ public class LearningService {
             feedback = "No se pudo generar la explicación debido a un error en el servicio.";
         }
 
-        feedback = feedback.replaceAll("```", "").replaceAll("(?i)^json\\s*", "").trim();
+        feedback = feedback.trim()
+                .replace("```", "")
+                .replaceAll("(?i)^json\\s*", "")
+                .trim();
+
         scenario.setFeedback(feedback);
         learningRepository.save(scenario);
 
@@ -135,7 +143,7 @@ public class LearningService {
         );
     }
 
-    private LearningScenario parseScenarioResponse(String response, String topic, Integer step) {
+    public LearningScenario parseScenarioResponse(String response, String topic, Integer step) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(response);
@@ -164,5 +172,4 @@ public class LearningService {
     public Page<LearningScenario> getScenariosByTopic(String topic, Pageable pageable) {
         return learningRepository.findByTopic(topic, pageable);
     }
-
 }

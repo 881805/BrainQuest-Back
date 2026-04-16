@@ -58,7 +58,7 @@ public class GameController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createGame(@RequestBody Game game, HttpServletRequest request) {
+    public ResponseEntity<Object> createGame(@RequestBody Game game, HttpServletRequest request) {
       try{
           game = gameService.createGame(game);
       } catch (Exception e) {
@@ -72,7 +72,7 @@ public class GameController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
@@ -93,7 +93,7 @@ public class GameController {
 
     @GetMapping("/{userId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getByUserId(
+    public ResponseEntity<Object> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -119,7 +119,7 @@ public class GameController {
     }
     @PutMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateGame(@RequestBody Game game, HttpServletRequest request) {
+    public ResponseEntity<Object> updateGame(@RequestBody Game game, HttpServletRequest request) {
 
         User winner = userRepository.findById(game.getWinner().getId()).orElse(null);
 
@@ -146,7 +146,7 @@ public class GameController {
 
     @DeleteMapping("/{gameId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public ResponseEntity<?> deleteMessage(@PathVariable Long gameId, HttpServletRequest request) {
+    public ResponseEntity<Object> deleteMessage(@PathVariable Long gameId, HttpServletRequest request) {
         Optional<Game> foundGame = gameRepository.findById(gameId);
         if(foundGame.isPresent()) {
             gameRepository.delete(foundGame.get());
@@ -161,7 +161,7 @@ public class GameController {
 
     @PatchMapping("/{gameId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> endGame(
+    public ResponseEntity<Object> endGame(
             @PathVariable Long gameId,
             HttpServletRequest httpServletRequest) {
 
