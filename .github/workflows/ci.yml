@@ -56,6 +56,14 @@ jobs:
           APP_DEFAULT_AI_PASSWORD: ${{ secrets.APP_DEFAULT_AI_PASSWORD }}
           SPRING_JACKSON_TIME_ZONE: ${{ secrets.SPRING_JACKSON_TIME_ZONE }}
           SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE }}
+        run: |
+          ./gradlew bootRun --args='--spring.profiles.active=test' &
+
+          echo "Esperando a que el servidor esté listo..."
+          for i in {1..30}; do
+            curl -s http://localhost:8080/actuator/health && echo "Servidor listo!" && break
+            sleep 2
+          done
 
       - name: Ejecutar build
         env:
