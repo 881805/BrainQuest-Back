@@ -35,15 +35,16 @@ public class AdminSeeder implements ApplicationRunner {
         this.passwordEncoder = passwordEncoder;
     }
 
+
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(ApplicationArguments args) throws Exception {
+        Thread.sleep(20000); // wait 5 seconds
         createSuperAdministrator();
         createAIUser();
     }
 
 
 
-    
     private void createSuperAdministrator() {
 
         String email = "super.admin@gmail.com";
