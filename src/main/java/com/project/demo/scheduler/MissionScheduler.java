@@ -17,10 +17,12 @@ public class MissionScheduler {
 
     private final MissionRepository missionRepository;
 
-    public MissionScheduler(MissionRepository missionRepository) {
-        this.missionRepository = missionRepository;
-    }
-//comment
+        public MissionScheduler(MissionRepository missionRepository) {
+            this.missionRepository = missionRepository;
+        }
+
+        
+
     // This will run every 5 minutes (300,000 milliseconds)
     @Scheduled(fixedRate = 60000, initialDelay = 10000) // espera 10s antes de la primera ejecución
     public void updateExpiredMissions() {
