@@ -82,3 +82,6 @@ jobs:
           SPRING_JACKSON_TIME_ZONE: ${{ secrets.SPRING_JACKSON_TIME_ZONE }}
           SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_TIME_ZONE }}
         run: ./gradlew build
+
+      - name: Run tests (includes REST Assured)
+        run: ./gradlew test
